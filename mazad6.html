@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>مزاد خماسي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#fff;font-family:'Cairo',sans-serif;padding:10px}
+.waiting-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:999}
+.ball{width:120px;height:120px;border-radius:50%;border:8px solid gold;border-top-color:transparent;animation:spin 1s linear infinite;margin-bottom:20px}
+@keyframes spin{100%{transform:rotate(360deg)}}
+.players{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}
+.player-card{background:#111;border:3px solid #333;border-radius:15px;padding:15px;text-align:center;position:relative}
+.player-card.active{border-color:#ffd700;box-shadow:0 0 20px gold}
+.player-card.sold{opacity:0.4}
+.player-name{font-size:18px;font-weight:900;color:#ffd700;margin:10px 0}
+.player-rating{color:#00ff88;font-size:14px}
+.current-bid{background:linear-gradient(90deg,#ffd700,#ff8c00);color:#000;padding:15px;border-radius:10px;text-align:center;font-size:24px;font-weight:900;margin:10px 0}
+.bid-controls{display:flex;gap:10px;justify-content:center;margin:20px 0}
+.bid-btn{padding:15px 30px;background:#00aaff;border:none;border-radius:10px;color:#fff;font-weight:900;font-size:18px;cursor:pointer}
+.bid-btn:disabled{background:#555}
+.players-list{background:#111;padding:15px;border-radius:10px;margin-top:20px}
+.player-item{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #333}
+.timer{font-size:40px;color:#ff4444;text-align:center;font-weight:900}
+</style>
+</head>
+<body>
+
+<div class="waiting-screen" id="waitingScreen">
+  <div class="ball"></div>
+  <h2>جاري انتظار اللاعبين...</h2>
+  <p>محتاجين 2+ عشان نبدأ</p>
+  <p id="playersCount">اللاعبين: 1</p>
+</div>
+
+<div id="gameUI" style="display:none">
+  <h2 style="text-align:center;color:gold">المزاد الخماسي 🔥</h2>
+  
+  <div class="timer" id="timer">15</div>
+  
+  <div class="players" id="players"></div>
+  
+  <div class="current-bid" id="currentBid">السعر الحالي: 1000</div>
+  
+  <div class="bid-controls">
+    <button class="bid-btn" onclick="bid(1000)">+1000</button>
+    <button class="bid-btn" onclick="bid(5000)">+5000</button>
+    <button class="bid-btn" onclick="bid(10000)">+10000</button>
+  </div>
+  
+  <div class="players-list">
+    <h3>اللاعبين في الغرفة:</h3>
+    <div id="roomPlayers"></div>
+  </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const myName = urlParams.get('name') || 'لاعب' + Math.floor(Math.random()*1000);
+const roomCode = 'auction5_public'; // غرفة عامة
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_55Rv6wCni9EwQurtUILswB1WjkXp6hM",
+  authDomain: "mazad-noogom.firebaseapp.com",
+  databaseURL: "https://mazad-noogom-default-rtdb.firebaseio.com",
+  projectId: "mazad-noogom",
+  storageBucket: "mazad-noogom.firebasestorage.app",
+  messagingSenderId: "183884985831",
+  appId: "1:183884985831:web:db231949dace2b0798b942"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let roomRef = db.ref('auction5/' + roomCode);
+let playerId = 'p' + Date.now();
+let gameStarted = false;
+let currentPlayers = [];
+let currentBid = 1000;
+let highestBidder = null;
+let timer = 15;
+let timerInterval;
+
+// 50 لاعب اسطوري للمزاد
+const playersPool = [
+{n:"ميسي",r:93},{n:"رونالدو",r:92},{n:"مبابي",r:91},{n:"هالاند",r:91},{n:"دي بروين",r:91},
+{n:"نيمار",r:91},{n:"ليفاندوفسكي",r:90},{n:"صلاح",r:90},{n:"فينيسيوس",r:90},{n:"بيلينجهام",r:90},
+{n:"نوير",r:91},{n:"كورتوا",r:90},{n:"فان دايك",r:90},{n:"راموس",r:90},{n:"مودريتش",r:90},
+{n:"كروس",r:90},{n:"زيدان",r:92},{n:"رونالدينيو",r:92},{n:"مارادونا",r:93},{n:"بيليه",r:93},
+{n:"رونالدو البرازيلي",r:92},{n:"هنري",r:91},{n:"مالديني",r:92},{n:"نيستا",r:91},{n:"كافو",r:91},
+{n:"داني الفيس",r:90},{n:"تشافي",r:91},{n:"انيستا",r:91},{n:"بيرلو",r:91},{n:"جيرارد",r:90},
+{n:"لامبارد",r:90},{n:"سوارز",r:90},{n:"زلاتان",r:89},{n:"ايتو",r:89},{n:"دراجبا",r:88},
+{n:"اجويرو",r:89},{n:"كين",r:89},{n:"ساكا",r:88},{n:"فودين",r:87},{n:"بيدري",r:87},
+{n:"جافي",r:85},{n:"كامافينجا",r:86},{n:"تشواميني",r:87},{n:"رايس",r:87},{n:"باريلا",r:87},
+{n:"برونو",r:88},{n:"اوديجارد",r:87},{n:"جرينليش",r:87},{n:"سون",r:88},{n:"محرز",r:87}
+];
+
+// 1. ندخل الغرفة
+roomRef.child('players/' + playerId).set({name: myName});
+
+// 2. نسمع اللاعبين
+roomRef.child('players').on('value', snap=>{
+  let players = snap.val() || {};
+  let count = Object.keys(players).length;
+  document.getElementById('playersCount').innerText = `اللاعبين: ${count}`;
+  
+  let html = '';
+  Object.values(players).forEach(p=>{
+    html += `<div class="player-item"><span>${p.name}</span></div>`;
+  });
+  document.getElementById('roomPlayers').innerHTML = html;
+
+  if(count >= 2 && !gameStarted){
+    gameStarted = true;
+    document.getElementById('waitingScreen').style.display = 'none';
+    document.getElementById('gameUI').style.display = 'block';
+    startAuction();
+  }
+});
+
+function getRandom5(){
+  let shuffled = [...playersPool].sort(()=>0.5-Math.random());
+  return shuffled.slice(0,5);
+}
+
+function startAuction(){
+  currentPlayers = getRandom5();
+  currentBid = 1000;
+  highestBidder = null;
+  timer = 15;
+  
+  renderPlayers();
+  
+  roomRef.child('state').set({
+    players: currentPlayers,
+    bid: currentBid,
+    bidder: null,
+    timer: timer
+  });
+  
+  timerInterval = setInterval(()=>{
+    timer--;
+    document.getElementById('timer').innerText = timer;
+    roomRef.child('state/timer').set(timer);
+    
+    if(timer <= 0){
+      clearInterval(timerInterval);
+      endAuction();
+    }
+  },1000);
+}
+
+function renderPlayers(){
+  let html = '';
+  currentPlayers.forEach((p,i)=>{
+    html += `<div class="player-card ${i==0?'active':''}">
+      <div class="player-name">${p.n}</div>
+      <div class="player-rating">OVR ${p.r}</div>
+    </div>`;
+  });
+  document.getElementById('players').innerHTML = html;
+  document.getElementById('currentBid').innerText = `السعر الحالي: ${currentBid} - ${highestBidder||'مفيش مزايد'}`;
+}
+
+function bid(amount){
+  let newBid = currentBid + amount;
+  currentBid = newBid;
+  highestBidder = myName;
+  
+  roomRef.child('state').update({
+    bid: currentBid,
+    bidder: myName
+  });
+  
+  // نعمل ريست للوقت
+  timer = 15;
+  document.getElementById('timer').innerText = timer;
+}
+
+// نسمع تحديثات المزاد
+roomRef.child('state').on('value', snap=>{
+  let state = snap.val();
+  if(!state) return;
+  
+  currentBid = state.bid;
+  highestBidder = state.bidder;
+  timer = state.timer;
+  document.getElementById('timer').innerText = timer;
+  renderPlayers();
+});
+
+function endAuction(){
+  let winner = highestBidder || 'محدش اشترى';
+  alert(`خلص المزاد! ${currentPlayers[0].n} راح لـ ${winner} بـ ${currentBid}`);
+  
+  // نشيل اول لاعب ونجيب 4 جداد
+  currentPlayers.shift();
+  let newPlayer = playersPool[Math.floor(Math.random()*playersPool.length)];
+  currentPlayers.push(newPlayer);
+  
+  setTimeout(startAuction, 3000);
+}
+</script>
+</body>
+</html>

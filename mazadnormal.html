@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>مزاد خماسي - ضد AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>body{background:#0a0a0a;color:#fff;font-family:'Cairo',sans-serif;text-align:center;padding:10px}.stats{display:flex;justify-content:space-around;align-items:center;background:#111;padding:12px;border-radius:10px;margin-bottom:10px;font-size:16px}.p1{color:#00aaff;font-weight:900}.p2{color:#ff4444;font-weight:900}.money{font-size:14px;color:#0f0;font-weight:700;margin-right:5px}.turn{background:#ffd700;color:#000;padding:8px;border-radius:8px;font-weight:bold;margin:10px;font-weight:700}.field{display:flex;justify-content:space-around}.team{width:48%;background:#111;border:2px solid #333;border-radius:10px;padding:10px}.slot{border:2px solid #555;background:#000;margin:5px;padding:12px;border-radius:8px;font-size:13px;min-height:25px;font-weight:700}.slot.filled{border-color:#ffd700;background:#1a1a1a}.card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:320px;margin:15px auto;background:#111}.pos{color:#aaa;font-size:14px;font-weight:400}.name{font-size:22px;color:#ffd700;margin:5px;font-weight:900}.price{font-size:18px;color:#0f0;font-weight:700} input{width:130px;padding:8px;border-radius:8px;border:2px solid #ffd700;background:#222;color:#fff;text-align:center;font-family:'Cairo'} button{padding:10px 15px;margin:4px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:16px;transition:0.3s}.bid{background:lime;color:#000}.take{background:red;color:#fff}.skip{background:#555;color:#fff} button:disabled{opacity:0.5;cursor:not-allowed;background:#333!important} #loading{ position:fixed;top:0;left:0;width:100%;height:100%; background:radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%); display:none;justify-content:center; align-items:center;flex-direction:column;z-index:999; }.ball{ width:120px;height:120px;border-radius:50%; background:conic-gradient(from 0deg, #fff 0deg 45deg, #000 45deg 90deg, #fff 90deg 135deg, #000 135deg 180deg, #fff 180deg 225deg, #000 225deg 270deg, #fff 270deg 315deg, #000 315deg 360deg); animation:spin 1.5s linear infinite; box-shadow:0 0 40px #ffd700; border:4px solid #ffd700; } @keyframes spin{100%{transform:rotate(360deg)}} #aiText{margin-top:30px;font-size:28px;color:#ffd700;font-weight:900;text-shadow:0 0 10px #ffd700;animation:pulse 1.5s infinite} @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}.result-box{ background:#111;border:2px solid #ffd700;border-radius:20px; padding:25px;margin-top:20px;width:80%;max-width:400px }</style>
+</head>
+<body>
+
+<h1>⚽ مزاد خماسي - ضد AI ⚽</h1>
+<div class="stats">
+  <div class="p1"><span id="myName">انت</span>: <span class="money" id="m1">100,000,000</span>$</div>
+  <div id="count">1 / 5</div>
+  <div class="p2">AI: <span class="money" id="m2">100,000,000</span>$</div>
+</div>
+
+<div class="turn" id="turn">دور المزايدة: انت</div>
+<div class="field"><div class="team"><h3 class="p1">فريقك</h3><div id="t1"></div></div><div class="team"><h3 class="p2">فريق AI</h3><div id="t2"></div></div></div>
+<div class="card"><div class="pos" id="pos"></div><div class="name" id="name"></div><div class="price" id="price"></div><input id="bidInput" type="number" placeholder="اكتب المزايدة"><br><button class="bid" id="bidBtn" onclick="bid()">مزايدة</button><button class="take" id="takeBtn" onclick="take()">خده</button><button class="skip" onclick="skip()">تخطي</button></div>
+<div id="loading"><div class="ball"></div><div id="aiText">الذكاء الاصطناعي يحلل</div><div class="result-box" id="resultBox" style="display:none;"></div></div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const myName = urlParams.get('name') || 'انت';
+document.getElementById('myName').innerText = myName
+
+const positions = ["GK","CB","CM1","CM2","ST"];
+let currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
+let turn=1, m1=100000000, m2=100000000;
+let t1=Array(5).fill(null), t2=Array(5).fill(null);
+let usedPlayers = [];
+let aiBidCount = 0;
+let isProcessing = false;
+
+// 1. دالة حفظ النتيجة في الذاكرة
+function حفظ_النتيجة(اسم_اللعبة, النتيجة, الاسكور){
+    let سجل = JSON.parse(localStorage.getItem('سجل_الذاكرة')) || [];
+    let تاريخ = new Date().toLocaleString('ar-EG');
+
+    سجل.unshift({
+        لعبة: اسم_اللعبة,
+        نتيجة: النتيجة,
+        اسكور: الاسكور,
+        وقت: تاريخ
+    });
+
+    if(سجل.length > 20) سجل.pop(); // اخر 20 بس
+
+    localStorage.setItem('سجل_الذاكرة', JSON.stringify(سجل));
+}
+
+const playersDB = {
+GK: { star: [{n:"كورتوا ⭐", p:15000000}, {n:"اليسون ⭐", p:14000000}, {n:"تير شتيجن ⭐", p:13000000}, {n:"دوناروما ⭐", p:14500000}, {n:"اوبلاك ⭐", p:13500000}], common: [{n:"تراب", p:7000000}, {n:"مندي", p:6000000}, {n:"رايا", p:8500000}, {n:"مارتينيز", p:9000000}, {n:"بيكفورد", p:7500000}, {n:"سومر", p:6500000}] },
+CB: { star: [{n:"فان دايك ⭐", p:40000000}, {n:"روبن دياز ⭐", p:38000000}, {n:"روديجر ⭐", p:35000000}, {n:"سالiba ⭐", p:37000000}, {n:"اراوخو ⭐", p:36000000}], common: [{n:"تومياسو", p:20000000}, {n:"جابرييل", p:22000000}, {n:"كونسا", p:18000000}, {n:"روميرو", p:25000000}, {n:"ماجواير", p:15000000}, {n:"جفارديول", p:30000000}] },
+CM: { star: [{n:"رودري ⭐", p:45000000}, {n:"فالفيردي ⭐", p:40000000}, {n:"بيلينجهام ⭐", p:50000000}, {n:"دي بروين ⭐", p:55000000}, {n:"بيدري ⭐", p:42000000}, {n:"كامافينجا ⭐", p:38000000}], common: [{n:"كاسيميرو", p:20000000}, {n:"فابينيو", p:22000000}, {n:"جوندوجان", p:25000000}, {n:"برونو", p:28000000}, {n:"ماونت", p:23000000}, {n:"باريلا", p:26000000}] },
+ST: { star: [{n:"هالاند ⭐", p:60000000}, {n:"مبابي ⭐", p:65000000}, {n:"ليفاندوفسكي ⭐", p:50000000}, {n:"كين ⭐", p:55000000}, {n:"فينيسيوس ⭐", p:62000000}, {n:"صلاح ⭐", p:58000000}], common: [{n:"جيرو", p:20000000}, {n:"ووتكينز", p:30000000}, {n:"ايساك", p:35000000}, {n:"داروين", p:32000000}, {n:"خيسوس", p:28000000}, {n:"تونى", p:27000000}] }
+};
+
+positions.forEach((pos,i)=>{ document.getElementById('t1').innerHTML+=`<div class="slot" id="t1-${i}"><b>${pos}</b><br>-</div>`; document.getElementById('t2').innerHTML+=`<div class="slot" id="t2-${i}"><b>${pos}</b><br>-</div>`; })
+
+function getRandomPlayer(pos){
+  let key = pos.startsWith("CM")? "CM" : pos;
+  let data = playersDB[key];
+  let allPlayers = [...data.star,...data.common];
+  let available = allPlayers.filter(p =>!usedPlayers.includes(p.n));
+  if(available.length === 0) {usedPlayers = []; available = allPlayers;}
+  let player = available[Math.floor(Math.random()*available.length)];
+  usedPlayers.push(player.n);
+  return player;
+}
+
+function newPlayer(){
+  isProcessing = false; aiBidCount = 0;
+  let posName=positions[currentPosIndex];
+  document.getElementById('pos').innerText="المركز: " + posName;
+  currentPlayer=getRandomPlayer(posName);
+  currentBid=currentPlayer.p; highestBidder=0;
+  updateMoney(); show();
+  if(turn==2) setTimeout(aiMove, 1500);
+}
+
+function show(){
+  document.getElementById('name').innerText=currentPlayer.n;
+  document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
+  document.getElementById('bidInput').value=currentBid+1000000;
+  document.getElementById('bidBtn').disabled = turn==2 || isProcessing;
+  document.getElementById('takeBtn').disabled = turn==2 || isProcessing;
+}
+
+function updateMoney(){
+  document.getElementById('m1').innerText=m1.toLocaleString();
+  document.getElementById('m2').innerText=m2.toLocaleString();
+}
+
+function bid(){
+  if(isProcessing) return;
+  let val=parseInt(document.getElementById('bidInput').value);
+  let money=turn==1?m1:m2;
+  if(isNaN(val)){alert("اكتب رقم المزايدة");return}
+  if(val<=currentBid){alert("لازم تعلي عن "+currentBid.toLocaleString());return}
+  if(val>money){alert("مفيش فلوس معاك. معاك: "+money.toLocaleString());return}
+  currentBid=val; highestBidder=turn;
+  document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
+  turn=turn==1?2:1;
+  document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?myName:"AI");
+  show();
+  if(turn==2) setTimeout(aiMove, 1500);
+}
+
+function take(){
+  if(isProcessing) return; isProcessing = true;
+  document.getElementById('takeBtn').disabled = true; document.getElementById('bidBtn').disabled = true;
+  m2 -= currentBid; t2[currentPosIndex] = currentPlayer;
+  let randomPlayerForMe = getRandomPlayer(positions[currentPosIndex]);
+  t1[currentPosIndex] = randomPlayerForMe;
+  updateMoney(); update(); setTimeout(nextPos, 1000);
+}
+
+function aiMove(){
+  if(isProcessing) return;
+  if(aiBidCount >= 1){
+    isProcessing = true; document.getElementById('takeBtn').disabled = true; document.getElementById('bidBtn').disabled = true;
+    document.getElementById('turn').innerText="🤖 AI: خده!";
+    setTimeout(() => {
+      m1 -= currentBid; t1[currentPosIndex] = currentPlayer;
+      let randomPlayerForAI = getRandomPlayer(positions[currentPosIndex]);
+      t2[currentPosIndex] = randomPlayerForAI;
+      updateMoney(); update(); nextPos();
+    }, 1200); return;
+  }
+  let aiMoney = m2; let wantPlayer = Math.random() < 0.7;
+  if(currentPlayer.n.includes("⭐")) wantPlayer = Math.random() < 0.9;
+  if(wantPlayer && aiMoney > currentBid + 1000000){
+    let newBid = currentBid + Math.floor(Math.random()*3000000 + 1000000);
+    if(newBid > aiMoney) newBid = aiMoney;
+    currentBid = newBid; highestBidder = 2; aiBidCount++;
+    document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
+    turn = 1; document.getElementById('turn').innerText="دور المزايدة: " + myName; show();
+  } else {
+    turn = 1; document.getElementById('turn').innerText="دور المزايدة: " + myName; show();
+  }
+}
+
+function skip(){
+  if(isProcessing) return; isProcessing = true;
+  let random1 = getRandomPlayer(positions[currentPosIndex]);
+  let random2 = getRandomPlayer(positions[currentPosIndex]);
+  t1[currentPosIndex] = random1; t2[currentPosIndex] = random2;
+  update(); setTimeout(nextPos, 1000);
+}
+
+function nextPos(){
+  currentPosIndex++;
+  if(currentPosIndex>=5){
+    document.getElementById('loading').style.display = 'flex';
+    setTimeout(aiEvaluate, 3500); return;
+  }
+  document.getElementById('count').innerText=(currentPosIndex+1)+" / 5";
+  turn=1; document.getElementById('turn').innerText="دور المزايدة: " + myName;
+  newPlayer();
+}
+
+function aiEvaluate(){
+  let score1 = 0, score2 = 0;
+  t1.forEach(p => { if(p){ score1 += p.p; if(p.n.includes("⭐")) score1 += 10000000; } });
+  t2.forEach(p => { if(p){ score2 += p.p; if(p.n.includes("⭐")) score2 += 10000000; } });
+
+  let النتيجة;
+  let نص_النتيجة;
+  if(score1 > score2){
+    النتيجة = "فوز";
+    نص_النتيجة = "🏆 الفائز: " + myName;
+    // 2. زود التذكرة
+    let التذاكر = parseInt(localStorage.getItem('التذاكر')) || 0;
+    localStorage.setItem('التذاكر', التذاكر + 1);
+  } else if(score2 > score1){
+    النتيجة = "خسارة";
+    نص_النتيجة = "🏆 الفائز: الذكاء الاصطناعي";
+  } else {
+    النتيجة = "تعادل";
+    نص_النتيجة = "🤝 تعادل";
+  }
+
+  // 3. احفظ في الذاكرة
+  حفظ_النتيجة("المزاد الخماسي", النتيجة, `${(score1/1000000).toFixed(1)}M - ${(score2/1000000).toFixed(1)}M`);
+
+  document.getElementById('aiText').innerText = "اكتمل التحليل";
+  document.getElementById('resultBox').style.display = "block";
+  document.getElementById('resultBox').innerHTML = `
+    <div style="font-size:24px;font-weight:900;color:#ffd700;margin-bottom:15px">${نص_النتيجة}</div>
+    <div style="font-size:18px;margin-bottom:10px">نتيجتك: ${(score1/1000000).toFixed(1)}M vs ${(score2/1000000).toFixed(1)}M</div>
+    <button onclick="window.location.href='memory.html'" style="margin-top:10px;width:100%;background:#00aaff;color:#fff">🧠 عرض الذاكرة</button>
+    <button onclick="window.location.href='home.html'" style="margin-top:10px;width:100%;background:#ffd700;color:#000">🔄 العودة للرئيسية</button>
+  `;
+}
+
+function update(){
+  updateMoney();
+  t1.forEach((p,i)=>{if(p){document.getElementById('t1-'+i).innerHTML=`<b>${positions[i]}</b><br>${p.n}`;document.getElementById('t1-'+i).classList.add('filled')}});
+  t2.forEach((p,i)=>{if(p){document.getElementById('t2-'+i).innerHTML=`<b>${positions[i]}</b><br>${p.n}`;document.getElementById('t2-'+i).classList.add('filled')}});
+}
+newPlayer();
+</script>
+</body>
+</html>
