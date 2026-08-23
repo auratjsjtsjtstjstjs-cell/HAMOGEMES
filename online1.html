@@ -39,7 +39,6 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 </div>
 
 <script>
-// 1. الكونفج
 const firebaseConfig = {
   apiKey: "AIzaSyC_55Rv6wCni9EwQurtUILswB1WjkXp6hM",
   authDomain: "mazad-noogom.firebaseapp.com",
@@ -52,7 +51,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 2. نجيب بيانات الرابط
 const urlParams = new URLSearchParams(window.location.search);
 const room = urlParams.get('room');
 const myName = urlParams.get('name');
@@ -60,7 +58,7 @@ const amIHost = urlParams.get('host') == '1';
 
 const positions = ["GK","LB","CB1","CB2","RB","CAM","CM1","CM2","RW","ST","LW"];
 
-// 3. قاعدة البيانات 156 لاعب 🔥
+// قاعدة البيانات 156 لاعب كاملة
 const playersDB = {
 GK: {
   star: [
@@ -164,15 +162,15 @@ LW: {
 };
 
 let myPlayer=0, currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
-let m1=200000, m2=200000, turn=1;
+let m1=200000, m2=200000000, turn=1;
 let t1=Array(11).fill(null), t2=Array(11).fill(null);
+let gameStarted = false;
 
 positions.forEach((pos,i)=>{
   document.getElementById('t1').innerHTML+=`<div class="slot" id="t1-${i}"><b>${pos}</b><br>-</div>`;
   document.getElementById('t2').innerHTML+=`<div class="slot" id="t2-${i}"><b>${pos}</b><br>-</div>`;
 })
 
-// 4. نسمع الغرفة ونستنى الاتنين
 db.ref('rooms/' + room).on('value', (snapshot) => {
   let data = snapshot.val()
   if(!data) return;
@@ -180,21 +178,21 @@ db.ref('rooms/' + room).on('value', (snapshot) => {
   if(amIHost){ myPlayer=1; document.getElementById('name1').innerText=myName; document.getElementById('name2').innerText=data.player2||'الخصم'; }
   else { myPlayer=2; document.getElementById('name2').innerText=myName; document.getElementById('name1').innerText=data.player1||'الخصم'; }
 
-  if(data.player1 && data.player2){
-    if(document.getElementById("gameScreen").style.display == "none"){
-      document.getElementById("waitingScreen").style.display = "none";
-      document.getElementById("gameScreen").style.display = "block";
-    }
-    loadData(data);
+  if(data.player1 && data.player2 &&!gameStarted){
+    gameStarted = true;
+    document.getElementById("waitingScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
   }
+
+  if(gameStarted) loadData(data);
 })
 
 function loadData(data){
   currentPosIndex=data.currentPos||0; currentBid=data.currentBid||0; highestBidder=data.highestBidder||0;
-  turn=data.turn||1; m1=data.m1; m2=data.m2; t1=data.t1; t2=data.t2;
-  if(currentBid==0 &&!currentPlayer) newPlayer();
+  turn=data.turn||1; m1=data.m1 || 200000000; m2=data.m2 || 200000000; t1=data.t1 || Array(11).fill(null); t2=data.t2 || Array(11).fill(null);
+  if(currentBid==0 &&!currentPlayer && currentPosIndex < 11) newPlayer();
   update();
-  loadPlayer();
+  if(currentPlayer) loadPlayer();
 }
 
 function getRandomPlayer(pos){
@@ -212,14 +210,14 @@ function newPlayer(){
 }
 
 function loadPlayer(){
-  let posName=positions[currentPosIndex];
-  document.getElementById('pos').innerText="المركز: " + posName;
+  if(!currentPlayer) return;
+  document.getElementById('pos').innerText="المركز: " + positions[currentPosIndex];
   document.getElementById('name').innerText=currentPlayer.n;
   document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
   document.getElementById('bidInput').value=currentBid+1000000;
   let myTurn = turn==myPlayer;
-  document.getElementById('bidBtn').disabled =!myTurn;
-  document.getElementById('takeBtn').disabled =!myTurn;
+  document.getElementById('bidBtn').disabled =!myTurn || currentPosIndex>=11;
+  document.getElementById('takeBtn').disabled =!myTurn || currentPosIndex>=11;
   document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?document.getElementById('name1').innerText:document.getElementById('name2').innerText) + (myTurn?" - دورك":"");
 }
 
