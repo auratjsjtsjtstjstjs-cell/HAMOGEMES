@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الذاكرة - سجل الالعاب</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+body{background: linear-gradient(180deg, #1a1a4d 0%, #0f0c29 100%);font-family:'Cairo',sans-serif;color:#fff;min-height:100vh;padding:20px 10px 100px}
+.container{max-width:600px;margin:0 auto}
+h1{text-align:center;font-size:32px;font-weight:900;margin-bottom:10px;background:linear-gradient(90deg, #667eea, #f093fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:#aaa;margin-bottom:25px}
+.game-card{
+    background:#111;border:2px solid #333;border-radius:15px;padding:15px;margin-bottom:12px;
+    display:flex;justify-content:space-between;align-items:center;transition:0.3s
+}
+.game-card:hover{border-color:#667eea;transform:translateX(-5px)}
+.game-info{flex:1}
+.game-name{font-size:18px;font-weight:900;margin-bottom:5px}
+.game-time{font-size:12px;color:#888}
+.game-result{padding:8px 15px;border-radius:10px;font-weight:900;font-size:14px}
+.win{background:linear-gradient(90deg, #00c851, #007e33)}
+.lose{background:linear-gradient(90deg, #ff4444, #cc0000)}
+.draw{background:linear-gradient(90deg, #ffbb33, #ff8800)}
+.game-score{font-size:14px;color:#0f0;font-weight:700;margin-top:5px}
+.empty{text-align:center;padding:50px 20px;color:#888}
+.empty-icon{font-size:60px;margin-bottom:15px}
+.btn-back{display:block;width:100%;padding:15px;background:#667eea;color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:900;cursor:pointer;margin-top:20px;font-family:'Cairo'}
+.btn-clear{background:#ff4444;margin-top:10px}
+.stats{display:flex;gap:10px;margin-bottom:20px}
+.stat-box{flex:1;background:#111;border:2px solid #667eea;border-radius:12px;padding:15px;text-align:center}
+.stat-num{font-size:24px;font-weight:900;color:#ffd700}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧠 الذاكرة</h1>
+    <p class="subtitle">سجل كل نتائجك في الالعاب</p>
+
+    <div class="stats" id="stats"></div>
+
+    <div id="list"></div>
+
+    <button class="btn-back" onclick="window.location.href='home.html'">🏠 الرجوع للرئيسية</button>
+    <button class="btn-back btn-clear" onclick="مسح_الذاكرة()">🗑️ مسح السجل</button>
+</div>
+
+<script>
+function عرض_الذاكرة(){
+    let سجل = JSON.parse(localStorage.getItem('سجل_الذاكرة')) || [];
+    let list = document.getElementById('list');
+    let statsDiv = document.getElementById('stats');
+
+    if(سجل.length === 0){
+        list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h2>مفيش العاب لسه</h2><p>العب اي جيم عشان النتيجة تظهر هنا</p></div>`;
+        statsDiv.style.display = 'none';
+        return;
+    }
+
+    // احصائيات
+    let فوز = سجل.filter(x => x.نتيجة === 'فوز').length;
+    let خسارة = سجل.filter(x => x.نتيجة === 'خسارة').length;
+    let تعادل = سجل.filter(x => x.نتيجة === 'تعادل').length;
+
+    statsDiv.innerHTML = `
+        <div class="stat-box"><div class="stat-num">${فوز}</div><div>فوز</div></div>
+        <div class="stat-box"><div class="stat-num">${خسارة}</div><div>خسارة</div></div>
+        <div class="stat-box"><div class="stat-num">${تعادل}</div><div>تعادل</div></div>
+    `;
+
+    // عرض السجل
+    list.innerHTML = '';
+    سجل.forEach(جيم => {
+        let classResult = جيم.نتيجة === 'فوز' ? 'win' : جيم.نتيجة === 'خسارة' ? 'lose' : 'draw';
+        let icon = جيم.نتيجة === 'فوز' ? '🏆' : جيم.نتيجة === 'خسارة' ? '💀' : '🤝';
+        
+        list.innerHTML += `
+        <div class="game-card">
+            <div class="game-info">
+                <div class="game-name">${icon} ${جيم.لعبة}</div>
+                <div class="game-score">النتيجة: ${جيم.اسكور}</div>
+                <div class="game-time">${جيم.وقت}</div>
+            </div>
+            <div class="game-result ${classResult}">${جيم.نتيجة}</div>
+        </div>
+        `;
+    });
+}
+
+function مسح_الذاكرة(){
+    if(confirm('متأكد عايز تمسح السجل كله؟')){
+        localStorage.removeItem('سجل_الذاكرة');
+        عرض_الذاكرة();
+    }
+}
+
+window.onload = عرض_الذاكرة;
+</script>
+
+</body>
+</html>
