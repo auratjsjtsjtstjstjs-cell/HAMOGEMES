@@ -96,8 +96,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentRoomRef = null;
-
-// نجيب الايميل من localStorage اللي اتخزن في index
 const userEmail = localStorage.getItem('userEmail') || 'guest';
 
 function show(t){
@@ -112,9 +110,9 @@ function generateCode(){
   return code;
 }
 
-// دي اللي اتعدلت -> بتروح lobby.html
-function goToLobby(code, player, type){
-  window.location.href = `lobby.html?room=${code}&player=${player}&type=${type}&name=${encodeURIComponent(userEmail)}`;
+// غيرت هنا -> loby.html
+function goToLoby(code, player, type){
+  window.location.href = `loby.html?room=${code}&player=${player}&type=${type}&name=${encodeURIComponent(userEmail)}`;
 }
 
 async function createRoom(type){
@@ -128,7 +126,7 @@ async function createRoom(type){
   if(snapshot.exists()) return createRoom(type);
   
   await currentRoomRef.set({
-    player1: userEmail, // حطيت الايميل بدل waiting
+    player1: userEmail,
     player2: null,
     type: type,
     status: 'waiting'
@@ -142,7 +140,7 @@ async function createRoom(type){
     const data = snap.val();
     if(data && data.player2){
       statusEl.textContent = 'لاعب انضم! جاري الدخول للوبي...';
-      setTimeout(()=> goToLobby(code, 1, type), 800) // <- هنا بقت lobby
+      setTimeout(()=> goToLoby(code, 1, type), 800) // <- loby
     }
   });
 }
@@ -160,10 +158,10 @@ async function joinRoom(type){
   if(data.player2) return alert('الغرفة ممتلئة');
   
   await currentRoomRef.update({
-    player2: userEmail, // حطيت الايميل بدل joined
+    player2: userEmail,
     status: 'ready'
   });
-  goToLobby(code, 2, type); // <- وهنا بقت lobby
+  goToLoby(code, 2, type); // <- loby
 }
 
 function copyCode(id){
