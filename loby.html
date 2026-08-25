@@ -97,9 +97,6 @@ body::before{
 }
 .readyBtn:active{transform:scale(0.95)}
 .readyBtn:disabled{background:#333;color:#666;box-shadow:none}
-
-/* شاشة المزاد */
-#gameScreen{display:none;height:100vh;overflow:auto;padding:10px}
 </style>
 </head>
 <body>
@@ -117,23 +114,18 @@ body::before{
   <div class="arena">
     <div class="playerCard" id="p1Card">
       <div class="avatar" id="p1Avatar">?</div>
-      <div class="playerName" id="p1Name">...</div>
+      <div class="playerName" id="p1Name">في الانتظار...</div>
       <div class="playerStatus" id="p1Status">-</div>
     </div>
     <div class="vs">VS</div>
     <div class="playerCard" id="p2Card">
       <div class="avatar" id="p2Avatar">?</div>
-      <div class="playerName" id="p2Name">...</div>
+      <div class="playerName" id="p2Name">في الانتظار...</div>
       <div class="playerStatus" id="p2Status">-</div>
     </div>
   </div>
 
   <button class="readyBtn" id="readyBtn" onclick="setReady()">⚡ جاهز ⚡</button>
-</div>
-
-<!-- شاشة المزاد -->
-<div id="gameScreen">
-<!-- حط كود المزاد بتاعك هنا -->
 </div>
 
 <script>
@@ -151,17 +143,24 @@ const db = firebase.database();
 
 const urlParams = new URLSearchParams(window.location.search);
 const room = urlParams.get('room');
+const type = urlParams.get('type') || 'pro'; // لازم تبعت type من الصفحة اللي قبلها
 const email = urlParams.get('name');
-const amIHost = urlParams.get('host') == '1';
+const amIHost = urlParams.get('player') == '1'; // غيرتها من host ل player
 const myPlayer = amIHost? 1 : 2;
 
 const displayName = email.split('@')[0].split('.').slice(0,2).join(' ');
 document.getElementById('roomCode').innerText = room;
 document.getElementById('p' + myPlayer + 'Avatar').innerText = displayName[0].toUpperCase();
 
-db.ref('rooms/' + room + '/player' + myPlayer + '/name').set(displayName);
+// المهم: نفس مسار التسجيل اللي في صفحة الانشاء
+const roomRef = db.ref('rooms/' + type + '/' + room);
+roomRef.child('player' + myPlayer).update({
+  name: displayName,
+  ready: false
+});
 
-db.ref('rooms/' + room).on('value', (snapshot) => {
+// اسمع التغيرات من نفس المسار
+roomRef.on('value', (snapshot) => {
   let data = snapshot.val() || {};
 
   for(let i=1; i<=2; i++){
@@ -169,19 +168,25 @@ db.ref('rooms/' + room).on('value', (snapshot) => {
       document.getElementById('p'+i+'Name').innerText = data['player'+i].name;
       document.getElementById('p'+i+'Avatar').innerText = data['player'+i].name[0].toUpperCase();
       document.getElementById('p'+i+'Status').innerText = data['player'+i].ready? 'جاهز' : '...';
-      if(data['player'+i].ready) document.getElementById('p'+i+'Card').classList.add('ready');
+      if(data['player'+i].ready) {
+        document.getElementById('p'+i+'Card').classList.add('ready');
+      } else {
+        document.getElementById('p'+i+'Card').classList.remove('ready');
+      }
     }
   }
 
-  if(data.player1?.ready && data.player2?.ready){
-    document.getElementById("lobbyScreen").style.display = "none";
-    document.getElementById("gameScreen").style.display = "block";
-    if(!data.started) db.ref('rooms/' + room + '/started').set(true);
+  // لما الاتنين جاهزين انقلهم ل online1.html
+  if(data.player1?.ready && data.player2?.ready &&!data.started){
+    roomRef.update({started: true}); // عشان متكررش
+    setTimeout(()=>{
+      window.location.href = `online1.html?room=${room}&player=${myPlayer}&type=${type}&name=${encodeURIComponent(email)}`;
+    }, 1000);
   }
 })
 
 function setReady(){
-  db.ref('rooms/' + room + '/player' + myPlayer + '/ready').set(true);
+  roomRef.child('player' + myPlayer + '/ready').set(true);
   document.getElementById('readyBtn').disabled = true;
   document.getElementById('readyBtn').innerText = '✅ تم';
 }
