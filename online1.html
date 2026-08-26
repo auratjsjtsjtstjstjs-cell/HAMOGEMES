@@ -178,7 +178,7 @@ LW: {
 };
 
 let myPlayer=0, currentPosIndex=0, currentPlayer1, currentPlayer2, currentBid=0, highestBidder=0;
-let m1=200000000, m2=200000, turn=1;
+let m1=200000000, m2=2000000000, turn=1;
 let t1=Array(11).fill(null), t2=Array(11).fill(null);
 let filled1=Array(11).fill(false), filled2=Array(11).fill(false);
 
@@ -211,8 +211,8 @@ function loadData(data){
   currentBid=data.currentBid||0;
   highestBidder=data.highestBidder||0;
   turn=data.turn||1;
-  m1=data.m1 || 200000;
-  m2=data.m2 || 200000;
+  m1=data.m1 || 200000000;
+  m2=data.m2 || 200000000;
   t1=data.t1 || Array(11).fill(null);
   t2=data.t2 || Array(11).fill(null);
   currentPlayer1=data.currentPlayer1 || null;
