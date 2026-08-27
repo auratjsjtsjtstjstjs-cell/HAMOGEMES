@@ -2,20 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>مزاد النجوم - 200 لاعب</title>
+<title>مزاد النجوم - 200 لاعب بمليون</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
-body{background:#0a0a0a;color:#fff;font-family:'Cairo',sans-serif;text-align:center;padding:10px}
-.stats{display:flex;justify-content:space-around;background:#111;padding:10px;border-radius:10px;margin-bottom:10px}
+body{
+  background:url('https://i.postimg.cc/06F7XXzk/bg.jpg') center/cover no-repeat fixed;
+  color:#fff;font-family:'Cairo',sans-serif;text-align:center;padding:10px
+}
+.stats{display:flex;justify-content:space-around;background:rgba(17,17,17,0.9);padding:10px;border-radius:10px;margin-bottom:10px}
 .p1{color:#00aaff}.p2{color:#ff4444}
 .turn{background:#ffd700;color:#000;padding:8px;border-radius:8px;font-weight:bold;margin:10px;font-weight:700}
 .field{display:flex;justify-content:space-around;flex-wrap:wrap}
-.team{width:48%;background:#111;border:2px solid #333;border-radius:10px;padding:10px;margin-bottom:10px}
-.slot{border:2px solid #555;background:#000;margin:5px;padding:12px;border-radius:8px;font-size:13px;min-height:25px;font-weight:700}
-.slot.filled{border-color:#ffd700;background:#1a1a1a}
-.card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:320px;margin:15px auto;background:#111}
+.team{width:48%;background:rgba(17,17,17,0.9);border:2px solid #333;border-radius:10px;padding:10px;margin-bottom:10px}
+.slot{border:2px solid #555;background:rgba(0,0,0,0.8);margin:5px;padding:12px;border-radius:8px;font-size:13px;min-height:25px;font-weight:700}
+.slot.filled{border-color:#ffd700;background:rgba(26,26,26,0.9)}
+.card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:320px;margin:15px auto;background:rgba(17,17,17,0.95)}
 .pos{color:#aaa;font-size:14px;font-weight:400}
 .name{font-size:22px;color:#ffd700;margin:5px;font-weight:900}
 .price{font-size:18px;color:#0f0;font-weight:700}
@@ -23,12 +26,35 @@ input{width:130px;padding:8px;border-radius:8px;border:2px solid #ffd700;backgro
 button{padding:10px 15px;margin:4px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:16px}
 .bid{background:lime;color:#000}.take{background:red;color:#fff}.skip{background:#555;color:#fff}
 button:disabled{opacity:0.5;cursor:not-allowed}
+
+#intro{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:999;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.ball{width:60px;height:60px;background:url('https://cdn-icons-png.flaticon.com/512/53/53179.png') center/cover;border-radius:50%;animation:shoot 2s ease-in-out forwards}
+@keyframes shoot{0%{transform:translateY(-200px)} 70%{transform:translateY(100px)} 100%{transform:translateY(120px) scale(0.8)}}
+.goal{width:200px;height:120px;border:5px solid #fff;border-bottom:none;margin-top:10px}
+.playersIntro{font-size:24px;margin-top:20px;font-weight:900}
+.playersIntro span{color:#ffd700}
+
+#timerScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:998;display:none;flex-direction:column;justify-content:center;align-items:center}
+.timerNum{font-size:120px;color:#ffd700;font-weight:900;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.timerText{font-size:30px;margin-top:20px}
 </style>
 </head>
 <body>
 
-<div id="gameScreen">
-<h1>⚽ مزاد النجوم - 200 لاعب ⚽</h1>
+<div id="intro">
+  <div class="ball"></div>
+  <div class="goal"></div>
+  <div class="playersIntro"><span id="p1Intro">لاعب 1</span> VS <span id="p2Intro">لاعب 2</span></div>
+</div>
+
+<div id="timerScreen">
+  <div class="timerNum" id="timerNum">3</div>
+  <div class="timerText">المركز القادم: <span id="nextPos"></span></div>
+</div>
+
+<div id="gameScreen" style="display:none">
+<h1>⚽ مزاد النجوم - كله بمليون ⚽</h1>
 <div class="stats"><div class="p1"><span id="name1">انت</span>: <span id="m1">200,000,000</span>$</div><div id="count">1 / 11</div><div class="p2"><span id="name2">الخصم</span>: <span id="m2">200,000,000</span>$</div></div>
 <div class="turn" id="turn">دور المزايدة:...</div>
 <div class="field"><div class="team"><h3 class="p1">فريقك</h3><div id="t1"></div></div><div class="team"><h3 class="p2">فريق الخصم</h3><div id="t2"></div></div></div>
@@ -56,84 +82,26 @@ const amIHost = urlParams.get('player') == '1';
 
 const positions = ["GK","LB","CB1","CB2","RB","CM1","CM2","CAM","LW","ST","RW"];
 
-// 200 لاعب ~18 لكل مركز
+const PRICE = 1000000;
+
 const playersDB = {
-GK: [
-{n:"تيبو كورتوا ⭐", p:15000000}, {n:"اليسون ⭐", p:14000000}, {n:"نوير ⭐", p:12000000}, {n:"دوناروما ⭐", p:14500000}, {n:"اوبلاك ⭐", p:13000000},
-{n:"ادرسون", p:13500000}, {n:"تير شتيجن", p:12500000}, {n:"بتشيك", p:11000000}, {n:"تراب", p:7000000}, {n:"رايا", p:8500000},
-{n:"مارتينيز", p:9000000}, {n:"بيكفورد", p:7500000}, {n:"سومر", p:6500000}, {n:"ليفاكوفيتش", p:8000000}, {n:"كوبل", p:7000000},
-{n:"هاندانوفيتش", p:6000000}, {n:"راجكوفيتش", p:5500000}, {n:"رامسديل", p:8000000}
-],
-LB: [
-{n:"الفونسو ديفيز ⭐", p:35000000}, {n:"روبرتسون ⭐", p:30000000}, {n:"ثيو ⭐", p:32000000},
-{n:"كانسيلو", p:33000000}, {n:"جايا", p:28000000}, {n:"ديماركو", p:25000000}, {n:"لوك شو", p:20000000}, {n:"تشيلويل", p:22000000},
-{n:"جوسينس", p:17000000}, {n:"ميندي", p:18000000}, {n:"اوليفيرا", p:15000000}, {n:"سانتوس", p:16000000}, {n:"كيركجارد", p:14000000}, {n:"ميتشيل", p:13000000}, {n:"اودو", p:12000000},
-{n:"ويليامز", p:11000000}, {n:"جونز", p:10000000}, {n:"سميث", p:9000000}
-],
-CB1: [
-{n:"فان دايك ⭐", p:40000000}, {n:"روبن دياز ⭐", p:38000000},
-{n:"روديجر", p:35000000}, {n:"ماركينيوس", p:34000000}, {n:"ميلتاو", p:33000000}, {n:"اراوخو", p:36000000},
-{n:"جفارديول", p:40000000}, {n:"ساليبا", p:37000000}, {n:"جابرييل", p:22000000}, {n:"توميوري", p:28000000},
-{n:"باستوني", p:32000000}, {n:"كيم", p:35000000}, {n:"كوناتي", p:30000000}, {n:"ماجواير", p:20000000},
-{n:"روميرو", p:29000000}, {n:"فان2", p:31000000}, {n:"جويدي", p:20000000}, {n:"كول", p:25000000}
-],
-CB2: [
-{n:"ميلتاو2 ⭐", p:33000000}, {n:"اراوخو2 ⭐", p:36000000}, {n:"جفارديول2 ⭐", p:40000000}, {n:"ساليبا2 ⭐", p:37000000},
-{n:"كيم2", p:35000000}, {n:"كوناتي2", p:30000000}, {n:"ماجواير2", p:20000000}, {n:"روميرو2", p:29000000}, {n:"فان3", p:31000000},
-{n:"جويدي2", p:20000000}, {n:"كول2", p:25000000}, {n:"سميث3", p:22000000}, {n:"داني3", p:19000000}, {n:"مور3", p:18000000},
-{n:"جونز3", p:17000000}, {n:"هيل3", p:16000000}, {n:"وايت3", p:15000000}, {n:"براون3", p:14000000}
-],
-RB: [
-{n:"اشرف حكيمي ⭐", p:40000000}, {n:"ترينت ⭐", p:38000000}, {n:"وكر ⭐", p:30000000},
-{n:"كوندي", p:32000000}, {n:"ريس جيمس", p:35000000}, {n:"فريمبونج", p:27000000}, {n:"بافارد", p:25000000}, {n:"دالوت", p:18000000},
-{n:"تريبير", p:20000000}, {n:"دامفريس", p:24000000}, {n:"وايت4", p:22000000}, {n:"بيدرو2", p:19000000}, {n:"دوجلاس2", p:17000000},
-{n:"سميث4", p:16000000}, {n:"جونز4", p:15000000}, {n:"براون4", p:14000000}, {n:"كلارك4", p:13000000}, {n:"هيل4", p:12000000}
-],
-CM1: [
-{n:"رودري ⭐", p:45000000}, {n:"فالفيردي ⭐", p:40000000},
-{n:"كيميتش", p:42000000}, {n:"بيدري", p:42000000}, {n:"كامافينجا", p:38000000}, {n:"تشواميني", p:39000000},
-{n:"رايس", p:40000000}, {n:"جوندوجان", p:25000000}, {n:"كاسيميرو", p:28000000}, {n:"باريلا", p:37000000},
-{n:"جافي", p:35000000}, {n:"زوبيميندي", p:30000000}, {n:"روبن2", p:27000000}, {n:"سافي", p:20000000}, {n:"كايسيدو", p:31000000},
-{n:"فرنانديز", p:33000000}, {n:"ماك", p:25000000}, {n:"باج", p:22000000}
-],
-CM2: [
-{n:"كروس ⭐", p:35000000}, {n:"مودريتش ⭐", p:30000000},
-{n:"كامافينجا2", p:38000000}, {n:"تشواميني2", p:39000000}, {n:"رايس2", p:40000000}, {n:"جوندوجان2", p:25000000}, {n:"كاسيميرو2", p:28000000},
-{n:"باريلا2", p:37000000}, {n:"جافي2", p:35000000}, {n:"زوبيميندي2", p:30000000}, {n:"روبن3", p:27000000}, {n:"سافي2", p:20000000},
-{n:"كايسيدو2", p:31000000}, {n:"فرنانديز2", p:33000000}, {n:"ماك2", p:25000000}, {n:"باج2", p:22000000}, {n:"جونز6", p:19000000},
-{n:"جراف2", p:18000000}
-],
-CAM: [
-{n:"دي بروين ⭐", p:50000000}, {n:"بيلينجهام ⭐", p:55000000}, {n:"ميسي ⭐", p:60000000},
-{n:"جريزمان", p:42000000}, {n:"برونو", p:38000000}, {n:"فودين", p:45000000}, {n:"اوديجارد", p:40000000}, {n:"موسيالا", p:43000000},
-{n:"سيلفا", p:35000000}, {n:"كوتينيو", p:30000000}, {n:"ماديسون", p:28000000}, {n:"زيلينسكي", p:25000000}, {n:"باريلا2", p:27000000}, {n:"ماكتوميناي", p:20000000}, {n:"جريليش", p:32000000},
-{n:"ماونت", p:28000000}, {n:"هافرتز", p:30000000}, {n:"فيرنانديز", p:33000000}
-],
-LW: [
-{n:"فينيسيوس ⭐", p:62000000}, {n:"لياو ⭐", p:42000000},
-{n:"نيمار", p:50000000}, {n:"صلاح", p:55000000}, {n:"مبابي", p:65000000}, {n:"راشفورد", p:40000000}, {n:"كومان", p:35000000}, {n:"سترلينج", p:38000000},
-{n:"ساني", p:36000000}, {n:"ديابي", p:30000000}, {n:"باركولا", p:28000000}, {n:"مارتينيلي", p:32000000}, {n:"تروسار", p:25000000}, {n:"جوتا", p:27000000}, {n:"لويس دياز", p:34000000},
-{n:"سميث8", p:19000000}, {n:"جونز8", p:18000000}, {n:"براون6", p:17000000}
-],
-ST: [
-{n:"هالاند ⭐", p:60000000}, {n:"مبابي ⭐", p:65000000}, {n:"ليفا ⭐", p:50000000},
-{n:"كين", p:55000000}, {n:"لاتارو", p:45000000}, {n:"اوسيمين", p:50000000}, {n:"فلاهوفيتش", p:40000000}, {n:"جيسوس", p:35000000},
-{n:"نونيز", p:42000000}, {n:"جيرود", p:20000000}, {n:"كافاني", p:18000000}, {n:"سواريز", p:25000000}, {n:"بنزيما", p:40000000}, {n:"اجويرو", p:30000000}, {n:"رونالدو", p:50000000},
-{n:"سميث9", p:19000000}, {n:"جونز9", p:18000000}, {n:"براون7", p:17000000}
-],
-RW: [
-{n:"محمد صلاح ⭐", p:50000000}, {n:"ساكا ⭐", p:45000000},
-{n:"ساني", p:43000000}, {n:"ديمبيلي", p:41000000}, {n:"جريزمان", p:38000000}, {n:"بوكايو", p:35000000}, {n:"رودريجو", p:40000000}, {n:"فودين", p:42000000},
-{n:"محرز", p:30000000}, {n:"ستيرلينج", p:32000000}, {n:"كولو", p:28000000}, {n:"بيدرو", p:25000000}, {n:"رافينيا", p:35000000}, {n:"انتوني", p:30000000}, {n:"جاكبو", p:27000000},
-{n:"سميث10", p:19000000}, {n:"جونز10", p:18000000}, {n:"براون8", p:17000000}
-]
-};
+GK: [{n:"تيبو كورتوا ⭐", p:PRICE}, {n:"اليسون ⭐", p:PRICE}, {n:"نوير ⭐", p:PRICE}, {n:"دوناروما ⭐", p:PRICE}, {n:"اوبلاك ⭐", p:PRICE}, {n:"ادرسون", p:PRICE}, {n:"تير شتيجن", p:PRICE}, {n:"بتشيك", p:PRICE}, {n:"تراب", p:PRICE}, {n:"رايا", p:PRICE}, {n:"مارتينيز", p:PRICE}, {n:"بيكفورد", p:PRICE}, {n:"سومر", p:PRICE}, {n:"ليفاكوفيتش", p:PRICE}, {n:"كوبل", p:PRICE}, {n:"هاندانوفيتش", p:PRICE}, {n:"راجكوفيتش", p:PRICE}, {n:"رامسديل", p:PRICE}],
+LB: [{n:"الفونسو ديفيز ⭐", p:PRICE}, {n:"روبرتسون ⭐", p:PRICE}, {n:"ثيو ⭐", p:PRICE}, {n:"كانسيلو", p:PRICE}, {n:"جايا", p:PRICE}, {n:"ديماركو", p:PRICE}, {n:"لوك شو", p:PRICE}, {n:"تشيلويل", p:PRICE}, {n:"جوسينس", p:PRICE}, {n:"ميندي", p:PRICE}, {n:"اوليفيرا", p:PRICE}, {n:"سانتوس", p:PRICE}, {n:"كيركجارد", p:PRICE}, {n:"ميتشيل", p:PRICE}, {n:"اودو", p:PRICE}, {n:"ويليامز", p:PRICE}, {n:"جونز", p:PRICE}, {n:"سميث", p:PRICE}],
+CB1: [{n:"فان دايك ⭐", p:PRICE}, {n:"روبن دياز ⭐", p:PRICE}, {n:"روديجر", p:PRICE}, {n:"ماركينيوس", p:PRICE}, {n:"ميلتاو", p:PRICE}, {n:"اراوخو", p:PRICE}, {n:"جفارديول", p:PRICE}, {n:"ساليبا", p:PRICE}, {n:"جابرييل", p:PRICE}, {n:"توميوري", p:PRICE}, {n:"باستوني", p:PRICE}, {n:"كيم", p:PRICE}, {n:"كوناتي", p:PRICE}, {n:"ماجواير", p:PRICE}, {n:"روميرو", p:PRICE}, {n:"فان2", p:PRICE}, {n:"جويدي", p:PRICE}, {n:"كول", p:PRICE}],
+CB2: [{n:"ميلتاو2 ⭐", p:PRICE}, {n:"اراوخو2 ⭐", p:PRICE}, {n:"جفارديول2 ⭐", p:PRICE}, {n:"ساليبا2 ⭐", p:PRICE}, {n:"كيم2", p:PRICE}, {n:"كوناتي2", p:PRICE}, {n:"ماجواير2", p:PRICE}, {n:"روميرو2", p:PRICE}, {n:"فان3", p:PRICE}, {n:"جويدي2", p:PRICE}, {n:"كول2", p:PRICE}, {n:"سميث3", p:PRICE}, {n:"داني3", p:PRICE}, {n:"مور3", p:PRICE}, {n:"جونز3", p:PRICE}, {n:"هيل3", p:PRICE}, {n:"وايت3", p:PRICE}, {n:"براون3", p:PRICE}],
+RB: [{n:"اشرف حكيمي ⭐", p:PRICE}, {n:"ترينت ⭐", p:PRICE}, {n:"وكر ⭐", p:PRICE}, {n:"كوندي", p:PRICE}, {n:"ريس جيمس", p:PRICE}, {n:"فريمبونج", p:PRICE}, {n:"بافارد", p:PRICE}, {n:"دالوت", p:PRICE}, {n:"تريبير", p:PRICE}, {n:"دامفريس", p:PRICE}, {n:"وايت4", p:PRICE}, {n:"بيدرو2", p:PRICE}, {n:"دوجلاس2", p:PRICE}, {n:"سميث4", p:PRICE}, {n:"جونز4", p:PRICE}, {n:"براون4", p:PRICE}, {n:"كلارك4", p:PRICE}, {n:"هيل4", p:PRICE}],
+CM1: [{n:"رودري ⭐", p:PRICE}, {n:"فالفيردي ⭐", p:PRICE}, {n:"كيميتش", p:PRICE}, {n:"بيدري", p:PRICE}, {n:"كامافينجا", p:PRICE}, {n:"تشواميني", p:PRICE}, {n:"رايس", p:PRICE}, {n:"جوندوجان", p:PRICE}, {n:"كاسيميرو", p:PRICE}, {n:"باريلا", p:PRICE}, {n:"جافي", p:PRICE}, {n:"زوبيميندي", p:PRICE}, {n:"روبن2", p:PRICE}, {n:"سافي", p:PRICE}, {n:"كايسيدو", p:PRICE}, {n:"فرنانديز", p:PRICE}, {n:"ماك", p:PRICE}, {n:"باج", p:PRICE}],
+CM2: [{n:"كروس ⭐", p:PRICE}, {n:"مودريتش ⭐", p:PRICE}, {n:"كامافينجا2", p:PRICE}, {n:"تشواميني2", p:PRICE}, {n:"رايس2", p:PRICE}, {n:"جوندوجان2", p:PRICE}, {n:"كاسيميرو2", p:PRICE}, {n:"باريلا2", p:PRICE}, {n:"جافي2", p:PRICE}, {n:"زوبيميندي2", p:PRICE}, {n:"روبن3", p:PRICE}, {n:"سافي2", p:PRICE}, {n:"كايسيدو2", p:PRICE}, {n:"فرنانديز2", p:PRICE}, {n:"ماك2", p:PRICE}, {n:"باج2", p:PRICE}, {n:"جونز6", p:PRICE}, {n:"جراف2", p:PRICE}],
+CAM: [{n:"دي بروين ⭐", p:PRICE}, {n:"بيلينجهام ⭐", p:PRICE}, {n:"ميسي ⭐", p:PRICE}, {n:"جريزمان", p:PRICE}, {n:"برونو", p:PRICE}, {n:"فودين", p:PRICE}, {n:"اوديجارد", p:PRICE}, {n:"موسيالا", p:PRICE}, {n:"سيلفا", p:PRICE}, {n:"كوتينيو", p:PRICE}, {n:"ماديسون", p:PRICE}, {n:"زيلينسكي", p:PRICE}, {n:"باريلا2", p:PRICE}, {n:"ماكتوميناي", p:PRICE}, {n:"جريليش", p:PRICE}, {n:"ماونت", p:PRICE}, {n:"هافرتز", p:PRICE}, {n:"فيرنانديز", p:PRICE}],
+LW: [{n:"فينيسيوس ⭐", p:PRICE}, {n:"لياو ⭐", p:PRICE}, {n:"نيمار", p:PRICE}, {n:"صلاح", p:PRICE}, {n:"مبابي", p:PRICE}, {n:"راشفورد", p:PRICE}, {n:"كومان", p:PRICE}, {n:"سترلينج", p:PRICE}, {n:"ساني", p:PRICE}, {n:"ديابي", p:PRICE}, {n:"باركولا", p:PRICE}, {n:"مارتينيلي", p:PRICE}, {n:"تروسار", p:PRICE}, {n:"جوتا", p:PRICE}, {n:"لويس دياز", p:PRICE}, {n:"سميث8", p:PRICE}, {n:"جونز8", p:PRICE}, {n:"براون6", p:PRICE}],
+ST: [{n:"هالاند ⭐", p:PRICE}, {n:"مبابي ⭐", p:PRICE}, {n:"ليفا ⭐", p:PRICE}, {n:"كين", p:PRICE}, {n:"لاتارو", p:PRICE}, {n:"اوسيمين", p:PRICE}, {n:"فلاهوفيتش", p:PRICE}, {n:"جيسوس", p:PRICE}, {n:"نونيز", p:PRICE}, {n:"جيرود", p:PRICE}, {n:"كافاني", p:PRICE}, {n:"سواريز", p:PRICE}, {n:"بنزيما", p:PRICE}, {n:"اجويرو", p:PRICE}, {n:"رونالدو", p:PRICE}, {n:"سميث9", p:PRICE}, {n:"جونز9", p:PRICE}, {n:"براون7", p:PRICE}],
+RW: [{n:"محمد صلاح ⭐", p:PRICE}, {n:"ساكا ⭐", p:PRICE}, {n:"ساني", p:PRICE}, {n:"ديمبيلي", p:PRICE}, {n:"جريزمان", p:PRICE}, {n:"بوكايو", p:PRICE}, {n:"رودريجو", p:PRICE}, {n:"فودين", p:PRICE}, {n:"محرز", p:PRICE}, {n:"ستيرلينج", p:PRICE}, {n:"كولو", p:PRICE}, {n:"بيدرو", p:PRICE}, {n:"رافينيا", p:PRICE}, {n:"انتوني", p:PRICE}, {n:"جاكبو", p:PRICE}, {n:"سميث10", p:PRICE}, {n:"جونز10", p:PRICE}, {n:"براون8", p:PRICE}] };
 
 let myPlayer=0, currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
 let m1=200000000, m2=200000000, turn=1, starter=1;
 let t1=Array(11).fill(null), t2=Array(11).fill(null);
 let filled1=Array(11).fill(false), filled2=Array(11).fill(false);
-let whoPassed=0;
+let whoPassed=0, timerRunning=false;
 
 positions.forEach((pos,i)=>{
   document.getElementById('t1').innerHTML+=`<div class="slot" id="t1-${i}"><b>${pos}</b><br>-</div>`;
@@ -149,13 +117,18 @@ roomRef.on('value', (snapshot) => {
   if(amIHost){
     myPlayer=1;
     document.getElementById('name1').innerText=myName.split('@')[0];
+    document.getElementById('p1Intro').innerText=myName.split('@')[0];
     document.getElementById('name2').innerText=data.player2?.name||'الخصم';
+    document.getElementById('p2Intro').innerText=data.player2?.name||'الخصم';
   } else {
     myPlayer=2;
     document.getElementById('name2').innerText=myName.split('@')[0];
+    document.getElementById('p2Intro').innerText=myName.split('@')[0];
     document.getElementById('name1').innerText=data.player1?.name||'الخصم';
+    document.getElementById('p1Intro').innerText=data.player1?.name||'الخصم';
   }
 
+  setTimeout(()=>{document.getElementById('intro').style.display='none';document.getElementById('gameScreen').style.display='block'},3000);
   loadData(data);
 })
 
@@ -166,17 +139,17 @@ function loadData(data){
   turn=data.turn||1;
   starter=data.starter||1;
   whoPassed=data.whoPassed||0;
-  m1=data.m1 || 200000000;
-  m2=data.m2 || 200000000;
+  m1=data.m1 || 200000;
+  m2=data.m2 || 200000;
   t1=data.t1 || Array(11).fill(null);
   t2=data.t2 || Array(11).fill(null);
   currentPlayer=data.currentPlayer || null;
   filled1=data.filled1 || Array(11).fill(false);
   filled2=data.filled2 || Array(11).fill(false);
 
-  if(filled1[currentPosIndex] && filled2[currentPosIndex] && currentPosIndex < 10 && amIHost){
-    let nextStarter = starter==1? 2 : 1;
-    roomRef.update({currentPos: currentPosIndex + 1, starter: nextStarter, turn: nextStarter, whoPassed:0});
+  if(filled1[currentPosIndex] && filled2[currentPosIndex] && currentPosIndex < 10 && amIHost &&!timerRunning){
+    timerRunning=true;
+    startTimer();
     return;
   }
 
@@ -186,9 +159,33 @@ function loadData(data){
   loadPlayer();
 }
 
+function startTimer(){
+  let count=3;
+  let nextPosName = positions[currentPosIndex + 1];
+  document.getElementById('timerScreen').style.display='flex';
+  document.getElementById('nextPos').innerText=nextPosName;
+  document.getElementById('timerNum').innerText=count;
+
+  let interval = setInterval(()=>{
+    count--;
+    document.getElementById('timerNum').innerText=count;
+    if(count<=0){
+      clearInterval(interval);
+      document.getElementById('timerScreen').style.display='none';
+      let nextStarter = starter==1? 2 : 1;
+      roomRef.update({
+        currentPos: currentPosIndex + 1,
+        starter: nextStarter,
+        turn: nextStarter,
+        whoPassed:0
+      }).then(()=>{timerRunning=false});
+    }
+  },1000);
+}
+
 function getRandomPlayer(pos){
   let data = playersDB[pos];
-  if(!data) return {n:"لاعب", p:10000000};
+  if(!data) return {n:"لاعب", p:PRICE};
   return data[Math.floor(Math.random()*data.length)];
 }
 
@@ -207,7 +204,7 @@ function loadPlayer(){
   document.getElementById('bidInput').value=currentBid+1000000;
   let myTurn = turn==myPlayer;
   document.getElementById('bidBtn').disabled =!myTurn;
-  document.getElementById('takeBtn').disabled =!myTurn || highestBidder==0;
+  document.getElementById('takeBtn').disabled =!myTurn;
   document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?document.getElementById('name1').innerText:document.getElementById('name2').innerText) + (myTurn?" - دورك":"");
 }
 
@@ -223,10 +220,8 @@ function bid(){
 
 function take(){
   if(turn!=myPlayer) return;
-  if(highestBidder==0){alert("لازم حد يزايد الاول");return}
-
-  let receiver = myPlayer;
-  let other = receiver==1? 2 : 1;
+  let receiver = myPlayer==1? 2 : 1;
+  let taker = myPlayer;
   let takenPlayer = currentPlayer;
 
   let updates={};
@@ -243,10 +238,12 @@ function take(){
   updates["currentPlayer"]=null;
   updates["currentBid"]=0;
   updates["highestBidder"]=0;
-  updates["turn"]=other;
+  updates["turn"]=taker;
   updates["whoPassed"]=0;
 
-  roomRef.update(updates);
+  roomRef.update(updates).then(()=>{
+    if(amIHost && myPlayer==taker) setTimeout(newPlayer,500);
+  });
 }
 
 function skip(){
