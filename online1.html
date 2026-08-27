@@ -11,31 +11,33 @@ body{background:url('https://i.postimg.cc/06F7XXzk/bg.jpg') center/cover no-repe
 .stats{display:flex;justify-content:space-around;background:rgba(17,17,17,0.9);padding:10px;border-radius:10px;margin-bottom:10px}
 .p1{color:#00aaff}.p2{color:#ff4444}
 .turn{background:#ffd700;color:#000;padding:8px;border-radius:8px;font-weight:bold;margin:10px;font-weight:700}
-.field-container{display:flex;justify-content:center;gap:30px;margin-top:15px;flex-wrap:wrap}
-.pitch{width:400px;height:580px;background:linear-gradient(#0a5c36,#0a5c36);border:3px solid #fff;border-radius:10px;position:relative;overflow:hidden}
+
+.field-container{display:flex;justify-content:center;gap:30px;margin-top:60px;flex-wrap:wrap}
+.pitch{width:420px;height:620px;background:linear-gradient(#0a5c36,#0a5c36);border:3px solid #fff;border-radius:10px;position:relative;overflow:hidden;margin-top:10px}
 .pitch::before{content:'';position:absolute;top:50%;left:0;width:100%;height:2px;background:#fff}
 .pitch::after{content:'';position:absolute;top:50%;left:50%;width:100px;height:100px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%)}
-.team-title{padding:10px;font-weight:900;font-size:18px;border-radius:8px 8px 0 0}
+.team-title{padding:10px;font-weight:900;font-size:18px;border-radius:8px 8px 0 0;margin-bottom:5px}
 .team-title.blue{background:#00aaff;color:#000}
 .team-title.red{background:#ff4444;color:#fff}
+
 .player-spot{position:absolute;width:85px;text-align:center;transform:translate(-50%,-50%)}
 .player-spot img{width:58px;height:58px;border-radius:50%;border:2px solid #fff;object-fit:cover;background:#222}
 .player-spot.name{font-size:11px;font-weight:700;margin-top:3px;text-shadow:1px 1px 3px #000;white-space:nowrap}
 .player-spot.pos-label{font-size:10px;color:#ffd700;font-weight:900}
 .player-spot.empty img{opacity:0.2;border:2px dashed #888}
 
-/* المراكز نزلت تحت */
-.pos-GK{bottom:10%;left:50%}
-.pos-LB{bottom:30%;left:18%}
-.pos-CB1{bottom:30%;left:38%}
-.pos-CB2{bottom:30%;left:62%}
-.pos-RB{bottom:30%;left:82%}
-.pos-CM1{bottom:50%;left:32%}
-.pos-CM2{bottom:50%;left:68%}
-.pos-CAM{bottom:65%;left:50%}
-.pos-LW{bottom:82%;left:22%}
-.pos-ST{bottom:85%;left:50%}
-.pos-RW{bottom:82%;left:78%}
+/* نزلنا الكل تحت عشان الجناحين والهجوم يبانو */
+.pos-GK{bottom:8%;left:50%}
+.pos-LB{bottom:26%;left:16%}
+.pos-CB1{bottom:26%;left:37%}
+.pos-CB2{bottom:26%;left:63%}
+.pos-RB{bottom:26%;left:84%}
+.pos-CM1{bottom:46%;left:30%}
+.pos-CM2{bottom:46%;left:70%}
+.pos-CAM{bottom:62%;left:50%}
+.pos-LW{bottom:78%;left:18%}
+.pos-ST{bottom:82%;left:50%}
+.pos-RW{bottom:78%;left:82%}
 
 .card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:360px;margin:15px auto;background:rgba(17,17,17,0.95)}
 .card img{width:110px;height:110px;border-radius:50%;border:3px solid #ffd700;object-fit:cover;margin-bottom:10px}
@@ -46,6 +48,7 @@ input{width:140px;padding:8px;border-radius:8px;border:2px solid #ffd700;backgro
 button{padding:10px 15px;margin:4px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:16px}
 .bid{background:lime;color:#000}.take{background:red;color:#fff}.skip{background:#555;color:#fff}
 button:disabled{opacity:0.5;cursor:not-allowed}
+
 #loading{ position:fixed;top:0;left:0;width:100%;height:100%; background:radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%); display:none;justify-content:center; align-items:center;flex-direction:column;z-index:999; }
 .ball{ width:120px;height:120px;border-radius:50%; background:conic-gradient(from 0deg, #fff 0deg 45deg, #000 45deg 90deg, #fff 90deg 135deg, #000 135deg 180deg, #fff 180deg 225deg, #000 225deg 270deg, #fff 270deg 315deg, #000 315deg 360deg); animation:spin 1.5s linear infinite; box-shadow:0 0 40px #ffd700, 0 0 80px #ffd700; border:4px solid #ffd700; }
 @keyframes spin{100%{transform:rotate(360deg)}}
@@ -97,28 +100,223 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 </div>
 
 <script>
-const firebaseConfig = {apiKey: "AIzaSyC_55Rv6wCni9EwQurtUILswB1WjkXp6hM",authDomain: "mazad-noogom.firebaseapp.com",databaseURL: "https://mazad-noogom-default-rtdb.firebaseio.com",projectId: "mazad-noogom",storageBucket: "mazad-noogom.firebasestorage.app",messagingSenderId: "183884985831",appId: "1:183884985831:web:db231949dace2b0798b942"};
+const firebaseConfig = {
+  apiKey: "AIzaSyC_55Rv6wCni9EwQurtUILswB1WjkXp6hM",
+  authDomain: "mazad-noogom.firebaseapp.com",
+  databaseURL: "https://mazad-noogom-default-rtdb.firebaseio.com",
+  projectId: "mazad-noogom",
+  storageBucket: "mazad-noogom.firebasestorage.app",
+  messagingSenderId: "183884985831",
+  appId: "1:183884985831:web:db231949dace2b0798b942"
+};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
 const urlParams = new URLSearchParams(window.location.search);
-const room = urlParams.get('room');const type = urlParams.get('type') || 'pro';const amIHost = urlParams.get('player') == '1';let myPlayer = amIHost? 1 : 2;
-const positions = ["GK","LB","CB1","CB2","RB","CM1","CM2","CAM","LW","ST","RW"];const PRICE = 1000000;
-const playersDB = {GK: [{n:"Thibaut Courtois", p:PRICE, img:"https://cdn.sofifa.net/players/192448/22_120.png"},{n:"Alisson", p:PRICE, img:"https://cdn.sofifa.net/players/212831/22_120.png"},{n:"Marc-Andre ter Stegen", p:PRICE, img:"https://cdn.sofifa.net/players/192448/22_120.png"},{n:"Gianluigi Donnarumma", p:PRICE, img:"https://cdn.sofifa.net/players/231281/22_120.png"},{n:"Jan Oblak", p:PRICE, img:"https://cdn.sofifa.net/players/193080/22_120.png"},{n:"Manuel Neuer", p:PRICE, img:"https://cdn.sofifa.net/players/167495/22_120.png"},{n:"Ederson", p:PRICE, img:"https://cdn.sofifa.net/players/210514/22_120.png"},{n:"Emiliano Martinez", p:PRICE, img:"https://cdn.sofifa.net/players/201942/22_120.png"},{n:"Mike Maignan", p:PRICE, img:"https://cdn.sofifa.net/players/207865/22_120.png"},{n:"David Raya", p:PRICE, img:"https://cdn.sofifa.net/players/219847/22_120.png"}],LB: [{n:"Alphonso Davies", p:PRICE, img:"https://cdn.sofifa.net/players/246669/22_120.png"},{n:"Andrew Robertson", p:PRICE, img:"https://cdn.sofifa.net/players/202944/22_120.png"},{n:"Theo Hernandez", p:PRICE, img:"https://cdn.sofifa.net/players/231677/22_120.png"},{n:"Joao Cancelo", p:PRICE, img:"https://cdn.sofifa.net/players/209331/22_120.png"},{n:"Nuno Mendes", p:PRICE, img:"https://cdn.sofifa.net/players/250168/22_120.png"},{n:"Luke Shaw", p:PRICE, img:"https://cdn.sofifa.net/players/202126/22_120.png"},{n:"Ben Chilwell", p:PRICE, img:"https://cdn.sofifa.net/players/220697/22_120.png"},{n:"Federico Dimarco", p:PRICE, img:"https://cdn.sofifa.net/players/236691/22_120.png"},{n:"Pervis Estupinan", p:PRICE, img:"https://cdn.sofifa.net/players/238794/22_120.png"},{n:"Alejandro Balde", p:PRICE, img:"https://cdn.sofifa.net/players/255034/22_120.png"}],CB1: [{n:"Virgil van Dijk", p:PRICE, img:"https://cdn.sofifa.net/players/203376/22_120.png"},{n:"Ruben Dias", p:PRICE, img:"https://cdn.sofifa.net/players/237679/22_120.png"},{n:"Antonio Rudiger", p:PRICE, img:"https://cdn.sofifa.net/players/212622/22_120.png"},{n:"William Saliba", p:PRICE, img:"https://cdn.sofifa.net/players/243413/22_120.png"},{n:"Eder Militao", p:PRICE, img:"https://cdn.sofifa.net/players/236788/22_120.png"},{n:"Ronald Araujo", p:PRICE, img:"https://cdn.sofifa.net/players/242684/22_120.png"},{n:"Marquinhos", p:PRICE, img:"https://cdn.sofifa.net/players/205988/22_120.png"},{n:"Josko Gvardiol", p:PRICE, img:"https://cdn.sofifa.net/players/246872/22_120.png"},{n:"Gabriel Magalhaes", p:PRICE, img:"https://cdn.sofifa.net/players/233927/22_120.png"},{n:"Alessandro Bastoni", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"}],CB2: [{n:"Kim Min-jae", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Ibrahima Konate", p:PRICE, img:"https://cdn.sofifa.net/players/234396/22_120.png"},{n:"Cristian Romero", p:PRICE, img:"https://cdn.sofifa.net/players/238262/22_120.png"},{n:"Matthijs de Ligt", p:PRICE, img:"https://cdn.sofifa.net/players/241721/22_120.png"},{n:"Levi Colwill", p:PRICE, img:"https://cdn.sofifa.net/players/252371/22_120.png"},{n:"Piero Hincapie", p:PRICE, img:"https://cdn.sofifa.net/players/246927/22_120.png"},{n:"Gleison Bremer", p:PRICE, img:"https://cdn.sofifa.net/players/233444/22_120.png"},{n:"Micky van de Ven", p:PRICE, img:"https://cdn.sofifa.net/players/246872/22_120.png"},{n:"Pau Torres", p:PRICE, img:"https://cdn.sofifa.net/players/234396/22_120.png"},{n:"Marc Guehi", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],RB: [{n:"Achraf Hakimi", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"},{n:"Trent Alexander-Arnold", p:PRICE, img:"https://cdn.sofifa.net/players/231677/22_120.png"},{n:"Kyle Walker", p:PRICE, img:"https://cdn.sofifa.net/players/168542/22_120.png"},{n:"Reece James", p:PRICE, img:"https://cdn.sofifa.net/players/238262/22_120.png"},{n:"Jeremie Frimpong", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Benjamin Pavard", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"},{n:"Kieran Trippier", p:PRICE, img:"https://cdn.sofifa.net/players/182521/22_120.png"},{n:"Denzel Dumfries", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Diogo Dalot", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"},{n:"Pedro Porro", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],CM1: [{n:"Rodri", p:PRICE, img:"https://cdn.sofifa.net/players/236788/22_120.png"},{n:"Federico Valverde", p:PRICE, img:"https://cdn.sofifa.net/players/238794/22_120.png"},{n:"Toni Kroos", p:PRICE, img:"https://cdn.sofifa.net/players/182521/22_120.png"},{n:"Declan Rice", p:PRICE, img:"https://cdn.sofifa.net/players/237679/22_120.png"},{n:"Joshua Kimmich", p:PRICE, img:"https://cdn.sofifa.net/players/212622/22_120.png"},{n:"Martin Odegaard", p:PRICE, img:"https://cdn.sofifa.net/players/232411/22_120.png"},{n:"Casemiro", p:PRICE, img:"https://cdn.sofifa.net/players/200145/22_120.png"},{n:"Eduardo Camavinga", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Aurelien Tchouameni", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Nicolo Barella", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"}],CM2: [{n:"Luka Modric", p:PRICE, img:"https://cdn.sofifa.net/players/177003/22_120.png"},{n:"Ilkay Gundogan", p:PRICE, img:"https://cdn.sofifa.net/players/204485/22_120.png"},{n:"Bruno Guimaraes", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Moises Caicedo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Enzo Fernandez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Zubimendi", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Sandro Tonali", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Manuel Locatelli", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Ryan Gravenberch", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Mason Mount", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],CAM: [{n:"Kevin De Bruyne", p:PRICE, img:"https://cdn.sofifa.net/players/192448/22_120.png"},{n:"Jude Bellingham", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Lionel Messi", p:PRICE, img:"https://cdn.sofifa.net/players/158023/22_120.png"},{n:"Bruno Fernandes", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Bernardo Silva", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Florian Wirtz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Jamal Musiala", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Antoine Griezmann", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"James Maddison", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Kai Havertz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],LW: [{n:"Neymar", p:PRICE, img:"https://cdn.sofifa.net/players/190871/22_120.png"},{n:"Rafael Leao", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Vinicius Junior", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Leroy Sane", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Marcus Rashford", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Kingsley Coman", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Raheem Sterling", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Luis Diaz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Gabriel Martinelli", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Barcola", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],ST: [{n:"Erling Haaland", p:PRICE, img:"https://cdn.sofifa.net/players/240088/22_120.png"},{n:"Kylian Mbappe", p:PRICE, img:"https://cdn.sofifa.net/players/231747/22_120.png"},{n:"Robert Lewandowski", p:PRICE, img:"https://cdn.sofifa.net/players/188545/22_120.png"},{n:"Harry Kane", p:PRICE, img:"https://cdn.sofifa.net/players/202126/22_120.png"},{n:"Lautaro Martinez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Victor Osimhen", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Darwin Nunez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Gabriel Jesus", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Dusan Vlahovic", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Alexander Isak", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],RW: [{n:"Mohamed Salah", p:PRICE, img:"https://cdn.sofifa.net/players/209331/22_120.png"},{n:"Bukayo Saka", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Riyad Mahrez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Rodrygo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Phil Foden", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Ousmane Dembele", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Jarrod Bowen", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Pedro Neto", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Jack Grealish", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Antony", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}]};
-let currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;let turn=1, m1=200000000, m2=200000000, starter=1;let t1={}, t2={};let filled1={}, filled2={};let whoPassed=0, timerRunning=false;
-function drawPitch(){positions.forEach(pos=>{document.getElementById('pitch1').innerHTML += `<div class="player-spot pos-${pos} empty" id="p1-${pos}"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;document.getElementById('pitch2').innerHTML += `<div class="player-spot pos-${pos} empty" id="p2-${pos}"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;})}
+const room = urlParams.get('room');
+const type = urlParams.get('type') || 'pro';
+const amIHost = urlParams.get('player') == '1';
+let myPlayer = amIHost? 1 : 2;
+
+const positions = ["GK","LB","CB1","CB2","RB","CM1","CM2","CAM","LW","ST","RW"];
+const PRICE = 1000000;
+
+const playersDB = {
+GK: [{n:"Thibaut Courtois", p:PRICE, img:"https://cdn.sofifa.net/players/192448/22_120.png"},{n:"Alisson", p:PRICE, img:"https://cdn.sofifa.net/players/212831/22_120.png"},{n:"Marc-Andre ter Stegen", p:PRICE, img:"https://cdn.sofifa.net/players/192448/22_120.png"},{n:"Gianluigi Donnarumma", p:PRICE, img:"https://cdn.sofifa.net/players/231281/22_120.png"},{n:"Jan Oblak", p:PRICE, img:"https://cdn.sofifa.net/players/193080/22_120.png"},{n:"Manuel Neuer", p:PRICE, img:"https://cdn.sofifa.net/players/167495/22_120.png"},{n:"Ederson", p:PRICE, img:"https://cdn.sofifa.net/players/210514/22_120.png"},{n:"Emiliano Martinez", p:PRICE, img:"https://cdn.sofifa.net/players/201942/22_120.png"},{n:"Mike Maignan", p:PRICE, img:"https://cdn.sofifa.net/players/207865/22_120.png"},{n:"David Raya", p:PRICE, img:"https://cdn.sofifa.net/players/219847/22_120.png"}],
+LB: [{n:"Alphonso Davies", p:PRICE, img:"https://cdn.sofifa.net/players/246669/22_120.png"},{n:"Andrew Robertson", p:PRICE, img:"https://cdn.sofifa.net/players/202944/22_120.png"},{n:"Theo Hernandez", p:PRICE, img:"https://cdn.sofifa.net/players/231677/22_120.png"},{n:"Joao Cancelo", p:PRICE, img:"https://cdn.sofifa.net/players/209331/22_120.png"},{n:"Nuno Mendes", p:PRICE, img:"https://cdn.sofifa.net/players/250168/22_120.png"},{n:"Luke Shaw", p:PRICE, img:"https://cdn.sofifa.net/players/202126/22_120.png"},{n:"Ben Chilwell", p:PRICE, img:"https://cdn.sofifa.net/players/220697/22_120.png"},{n:"Federico Dimarco", p:PRICE, img:"https://cdn.sofifa.net/players/236691/22_120.png"},{n:"Pervis Estupinan", p:PRICE, img:"https://cdn.sofifa.net/players/238794/22_120.png"},{n:"Alejandro Balde", p:PRICE, img:"https://cdn.sofifa.net/players/255034/22_120.png"}],
+CB1: [{n:"Virgil van Dijk", p:PRICE, img:"https://cdn.sofifa.net/players/203376/22_120.png"},{n:"Ruben Dias", p:PRICE, img:"https://cdn.sofifa.net/players/237679/22_120.png"},{n:"Antonio Rudiger", p:PRICE, img:"https://cdn.sofifa.net/players/212622/22_120.png"},{n:"William Saliba", p:PRICE, img:"https://cdn.sofifa.net/players/243413/22_120.png"},{n:"Eder Militao", p:PRICE, img:"https://cdn.sofifa.net/players/236788/22_120.png"},{n:"Ronald Araujo", p:PRICE, img:"https://cdn.sofifa.net/players/242684/22_120.png"},{n:"Marquinhos", p:PRICE, img:"https://cdn.sofifa.net/players/205988/22_120.png"},{n:"Josko Gvardiol", p:PRICE, img:"https://cdn.sofifa.net/players/246872/22_120.png"},{n:"Gabriel Magalhaes", p:PRICE, img:"https://cdn.sofifa.net/players/233927/22_120.png"},{n:"Alessandro Bastoni", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"}],
+CB2: [{n:"Kim Min-jae", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Ibrahima Konate", p:PRICE, img:"https://cdn.sofifa.net/players/234396/22_120.png"},{n:"Cristian Romero", p:PRICE, img:"https://cdn.sofifa.net/players/238262/22_120.png"},{n:"Matthijs de Ligt", p:PRICE, img:"https://cdn.sofifa.net/players/241721/22_120.png"},{n:"Levi Colwill", p:PRICE, img:"https://cdn.sofifa.net/players/252371/22_120.png"},{n:"Piero Hincapie", p:PRICE, img:"https://cdn.sofifa.net/players/246927/22_120.png"},{n:"Gleison Bremer", p:PRICE, img:"https://cdn.sofifa.net/players/233444/22_120.png"},{n:"Micky van de Ven", p:PRICE, img:"https://cdn.sofifa.net/players/246872/22_120.png"},{n:"Pau Torres", p:PRICE, img:"https://cdn.sofifa.net/players/234396/22_120.png"},{n:"Marc Guehi", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],
+RB: [{n:"Achraf Hakimi", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"},{n:"Trent Alexander-Arnold", p:PRICE, img:"https://cdn.sofifa.net/players/231677/22_120.png"},{n:"Kyle Walker", p:PRICE, img:"https://cdn.sofifa.net/players/168542/22_120.png"},{n:"Reece James", p:PRICE, img:"https://cdn.sofifa.net/players/238262/22_120.png"},{n:"Jeremie Frimpong", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Benjamin Pavard", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"},{n:"Kieran Trippier", p:PRICE, img:"https://cdn.sofifa.net/players/182521/22_120.png"},{n:"Denzel Dumfries", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Diogo Dalot", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"},{n:"Pedro Porro", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],
+CM1: [{n:"Rodri", p:PRICE, img:"https://cdn.sofifa.net/players/236788/22_120.png"},{n:"Federico Valverde", p:PRICE, img:"https://cdn.sofifa.net/players/238794/22_120.png"},{n:"Toni Kroos", p:PRICE, img:"https://cdn.sofifa.net/players/182521/22_120.png"},{n:"Declan Rice", p:PRICE, img:"https://cdn.sofifa.net/players/237679/22_120.png"},{n:"Joshua Kimmich", p:PRICE, img:"https://cdn.sofifa.net/players/212622/22_120.png"},{n:"Martin Odegaard", p:PRICE, img:"https://cdn.sofifa.net/players/232411/22_120.png"},{n:"Casemiro", p:PRICE, img:"https://cdn.sofifa.net/players/200145/22_120.png"},{n:"Eduardo Camavinga", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Aurelien Tchouameni", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Nicolo Barella", p:PRICE, img:"https://cdn.sofifa.net/players/235073/22_120.png"}],
+CM2: [{n:"Luka Modric", p:PRICE, img:"https://cdn.sofifa.net/players/177003/22_120.png"},{n:"Ilkay Gundogan", p:PRICE, img:"https://cdn.sofifa.net/players/204485/22_120.png"},{n:"Bruno Guimaraes", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Moises Caicedo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Enzo Fernandez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Zubimendi", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Sandro Tonali", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Manuel Locatelli", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Ryan Gravenberch", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Mason Mount", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],
+CAM: [{n:"Kevin De Bruyne", p:PRICE, img:"https://cdn.sofifa.net/players/192448/22_120.png"},{n:"Jude Bellingham", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Lionel Messi", p:PRICE, img:"https://cdn.sofifa.net/players/158023/22_120.png"},{n:"Bruno Fernandes", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Bernardo Silva", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Florian Wirtz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Jamal Musiala", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Antoine Griezmann", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"James Maddison", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Kai Havertz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],
+LW: [{n:"Neymar", p:PRICE, img:"https://cdn.sofifa.net/players/190871/22_120.png"},{n:"Rafael Leao", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Vinicius Junior", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Leroy Sane", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Marcus Rashford", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Kingsley Coman", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Raheem Sterling", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Luis Diaz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Gabriel Martinelli", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Barcola", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],
+ST: [{n:"Erling Haaland", p:PRICE, img:"https://cdn.sofifa.net/players/240088/22_120.png"},{n:"Kylian Mbappe", p:PRICE, img:"https://cdn.sofifa.net/players/231747/22_120.png"},{n:"Robert Lewandowski", p:PRICE, img:"https://cdn.sofifa.net/players/188545/22_120.png"},{n:"Harry Kane", p:PRICE, img:"https://cdn.sofifa.net/players/202126/22_120.png"},{n:"Lautaro Martinez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Victor Osimhen", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Darwin Nunez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Gabriel Jesus", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Dusan Vlahovic", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Alexander Isak", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}],
+RW: [{n:"Mohamed Salah", p:PRICE, img:"https://cdn.sofifa.net/players/209331/22_120.png"},{n:"Bukayo Saka", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Riyad Mahrez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Rodrygo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Phil Foden", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Ousmane Dembele", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Jarrod Bowen", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Pedro Neto", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Jack Grealish", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"},{n:"Antony", p:PRICE, img:"https://cdn.sofifa.net/players/246427/22_120.png"}]
+};
+
+let currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
+let turn=1, m1=200000, m2=200000, starter=1;
+let t1={}, t2={};
+let filled1={}, filled2={};
+let whoPassed=0, timerRunning=false;
+
+function drawPitch(){
+  positions.forEach(pos=>{
+    document.getElementById('pitch1').innerHTML += `<div class="player-spot pos-${pos} empty" id="p1-${pos}"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
+    document.getElementById('pitch2').innerHTML += `<div class="player-spot pos-${pos} empty" id="p2-${pos}"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
+  })
+}
 drawPitch();
+
 const roomRef = db.ref('rooms/' + type + '/' + room);
-roomRef.on('value', async (snapshot) => {let data = snapshot.val();if(!data) return;document.getElementById('name1').innerText = data.player1?.name || 'الازرق';document.getElementById('name2').innerText = data.player2?.name || 'الاحمر';document.getElementById('team1Title').innerText = data.player1?.name || 'الفريق الازرق';document.getElementById('team2Title').innerText = data.player2?.name || 'الفريق الاحمر';await loadData(data);})
-async function loadData(data){currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;whoPassed=data.whoPassed||0;m1=data.m1 || 200000;m2=data.m2 || 200000;t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};let currentPos = positions[currentPosIndex];if(filled1[currentPos] && filled2[currentPos] && currentPosIndex < 10 && amIHost &&!timerRunning){timerRunning=true;startTimer();return;}if(currentPosIndex >= 11 && amIHost){document.getElementById('loading').style.display = 'flex';setTimeout(evaluateGame, 3000);return;}if(!currentPlayer &&!filled1[currentPos] &&!filled2[currentPos] && amIHost) newPlayer();await updatePitch();show();}
-function startTimer(){let count=3;let nextPosName = positions[currentPosIndex + 1];document.getElementById('timerScreen').style.display='flex';document.getElementById('nextPos').innerText=nextPosName;document.getElementById('timerNum').innerText=count;let interval = setInterval(()=>{count--;document.getElementById('timerNum').innerText=count;if(count<=0){clearInterval(interval);document.getElementById('timerScreen').style.display='none';let nextStarter = starter==1? 2 : 1;roomRef.update({currentPos: currentPosIndex + 1, starter: nextStarter, turn: nextStarter, whoPassed:0}).then(()=>{timerRunning=false});}},1000);}
-function getRandomPlayer(pos){let data = playersDB[pos];return data[Math.floor(Math.random()*data.length)];}
-function newPlayer(){let posName=positions[currentPosIndex];let p = getRandomPlayer(posName);roomRef.update({ currentBid: p.p, currentPlayer: p })}
-async function show(){if(!currentPlayer) return;document.getElementById('pos').innerText="المركز: " + positions[currentPosIndex];document.getElementById('name').innerText=currentPlayer.n;document.getElementById('playerImg').src = currentPlayer.img;document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";document.getElementById('bidInput').value=currentBid+1000000;let myTurn = turn==myPlayer;document.getElementById('bidBtn').disabled =!myTurn;document.getElementById('takeBtn').disabled =!myTurn;document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?document.getElementById('name1').innerText:document.getElementById('name2').innerText) + (myTurn?" - دورك":"");}
-function bid(){if(turn!=myPlayer) return;let val=parseInt(document.getElementById('bidInput').value);let money=myPlayer==1?m1:m2;if(isNaN(val)){alert("اكتب رقم");return}if(val<=currentBid){alert("لازم تعلي");return}if(val>money){alert("مفيش فلوس");return}roomRef.update({currentBid:val, highestBidder:myPlayer, turn:myPlayer==1?2:1});}
-function take(){if(turn!=myPlayer) return;let receiver = myPlayer==1? 2 : 1;let taker = myPlayer;let takenPlayer = currentPlayer;let pos = positions[currentPosIndex];let updates={};if(receiver==1){updates["m1"]=m1-currentBid;updates["t1/"+pos]=takenPlayer;updates["filled1/"+pos]=true;} else {updates["m2"]=m2-currentBid;updates["t2/"+pos]=takenPlayer;updates["filled2/"+pos]=true;}updates["currentPlayer"]=null;updates["currentBid"]=0;updates["highestBidder"]=0;updates["turn"]=taker;updates["whoPassed"]=0;roomRef.update(updates).then(()=>{setTimeout(()=>{ if(amIHost) newPlayer(); }, 500);});}
-function skip(){if(turn!=myPlayer) return;let pos = positions[currentPosIndex];let updates={};if(whoPassed==0){updates["whoPassed"]=myPlayer;updates["turn"]=myPlayer==1?2:1;} else if(whoPassed!=myPlayer){updates["filled1/"+pos]=true;updates["filled2/"+pos]=true;updates["whoPassed"]=0;updates["currentPlayer"]=null;}roomRef.update(updates).then(()=>{setTimeout(()=>{ if(amIHost) newPlayer(); }, 500);});}
-async function updatePitch(){document.getElementById('m1').innerText=m1.toLocaleString();document.getElementById('m2').innerText=m2.toLocaleString();document.getElementById('count').innerText=(currentPosIndex+1)+" / 11";for(let pos of positions){if(t1[pos]){document.getElementById('p1-'+pos).innerHTML=`<img src="${t1[pos].img}"><div class="pos-label">${pos}</div><div class="name">${t1[pos].n.split(' ')[0]}</div>`;document.getElementById('p1-'+pos).classList.remove('empty');}if(t2[pos]){document.getElementById('p2-'+pos).innerHTML=`<img src="${t2[pos].img}"><div class="pos-label">${pos}</div><div class="name">${t2[pos].n.split(' ')[0]}</div>`;document.getElementById('p2-'+pos).classList.remove('empty');}}}
-async function evaluateGame(){let score1 = Object.values(t1).reduce((a,b)=>a+b.p,0);let score2 = Object.values(t2).reduce((a,b)=>a+b.p,0);let winnerText = score1 > score2? "🏆 الفائز: "+document.getElementById('name1').innerText : score2 > score1? "🏆 الفائز: "+document.getElementById('name2').innerText : "🤝 تعادل";let winnerColor = score1 > score2? "lime" : score2 > score1? "#ff4444" : "#ffd700";document.getElementById('aiText').innerText = "اكتمل التحليل";document.getElementById('resultBox').style.display = "block";document.getElementById('resultBox').innerHTML = `<div style="font-size:24px;font-weight:900;color:${winnerColor};margin-bottom:15px">${winnerText}</div><div style="display:flex;justify-content:space-between;margin:10px 0"><span>${document.getElementById('name1').innerText}:</span><span style="color:#00aaff;font-weight:700">${(score1/1000000).toFixed(1)} مليون</span></div><div style="display:flex;justify-content:space-between;margin:10px 0"><span>${document.getElementById('name2').innerText}:</span><span style="color:#ff4444;font-weight:700">${(score2/1000000).toFixed(1)} مليون</span></div><button onclick="window.location.href='home.html'" style="margin-top:20px;width:100%;background:#ffd700;color:#000">🔄 العودة للرئيسية</button>`;}
+
+roomRef.on('value', async (snapshot) => {
+  let data = snapshot.val()
+  if(!data) return;
+  document.getElementById('name1').innerText = data.player1?.name || 'الازرق';
+  document.getElementById('name2').innerText = data.player2?.name || 'الاحمر';
+  document.getElementById('team1Title').innerText = data.player1?.name || 'الفريق الازرق';
+  document.getElementById('team2Title').innerText = data.player2?.name || 'الفريق الاحمر';
+  await loadData(data);
+})
+
+async function loadData(data){
+  currentPosIndex=data.currentPos||0;
+  currentBid=data.currentBid||0;
+  highestBidder=data.highestBidder||0;
+  turn=data.turn||1;
+  starter=data.starter||1;
+  whoPassed=data.whoPassed||0;
+  m1=data.m1 || 200000;
+  m2=data.m2 || 200000;
+  t1=data.t1 || {};
+  t2=data.t2 || {};
+  currentPlayer=data.currentPlayer || null;
+  filled1=data.filled1 || {};
+  filled2=data.filled2 || {};
+
+  let currentPos = positions[currentPosIndex];
+  if(filled1[currentPos] && filled2[currentPos] && currentPosIndex < 10 && amIHost &&!timerRunning){
+    timerRunning=true;
+    startTimer();
+    return;
+  }
+  if(currentPosIndex >= 11 && amIHost){
+    document.getElementById('loading').style.display = 'flex';
+    setTimeout(evaluateGame, 3000);
+    return;
+  }
+  if(!currentPlayer &&!filled1[currentPos] &&!filled2[currentPos] && amIHost) newPlayer();
+  await updatePitch();
+  show();
+}
+
+function startTimer(){
+  let count=3;
+  let nextPosName = positions[currentPosIndex + 1];
+  document.getElementById('timerScreen').style.display='flex';
+  document.getElementById('nextPos').innerText=nextPosName;
+  document.getElementById('timerNum').innerText=count;
+  let interval = setInterval(()=>{
+    count--;
+    document.getElementById('timerNum').innerText=count;
+    if(count<=0){
+      clearInterval(interval);
+      document.getElementById('timerScreen').style.display='none';
+      let nextStarter = starter==1? 2 : 1;
+      roomRef.update({currentPos: currentPosIndex + 1, starter: nextStarter, turn: nextStarter, whoPassed:0}).then(()=>{timerRunning=false});
+    }
+  },1000);
+}
+
+function getRandomPlayer(pos){
+  let data = playersDB[pos];
+  return data[Math.floor(Math.random()*data.length)];
+}
+
+function newPlayer(){
+  let posName=positions[currentPosIndex];
+  let p = getRandomPlayer(posName);
+  roomRef.update({ currentBid: p.p, currentPlayer: p })
+}
+
+async function show(){
+  if(!currentPlayer) return;
+  document.getElementById('pos').innerText="المركز: " + positions[currentPosIndex];
+  document.getElementById('name').innerText=currentPlayer.n;
+  document.getElementById('playerImg').src = currentPlayer.img;
+  document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
+  document.getElementById('bidInput').value=currentBid+1000000;
+  let myTurn = turn==myPlayer;
+  document.getElementById('bidBtn').disabled =!myTurn;
+  document.getElementById('takeBtn').disabled =!myTurn;
+  document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?document.getElementById('name1').innerText:document.getElementById('name2').innerText) + (myTurn?" - دورك":"");
+}
+
+function bid(){
+  if(turn!=myPlayer) return;
+  let val=parseInt(document.getElementById('bidInput').value);
+  let money=myPlayer==1?m1:m2;
+  if(isNaN(val)){alert("اكتب رقم");return}
+  if(val<=currentBid){alert("لازم تعلي");return}
+  if(val>money){alert("مفيش فلوس");return}
+  roomRef.update({currentBid:val, highestBidder:myPlayer, turn:myPlayer==1?2:1});
+}
+
+function take(){
+  if(turn!=myPlayer) return;
+  let receiver = myPlayer==1? 2 : 1;
+  let taker = myPlayer;
+  let takenPlayer = currentPlayer;
+  let pos = positions[currentPosIndex];
+  let updates={};
+  if(receiver==1){
+    updates["m1"]=m1-currentBid;
+    updates["t1/"+pos]=takenPlayer;
+    updates["filled1/"+pos]=true;
+  } else {
+    updates["m2"]=m2-currentBid;
+    updates["t2/"+pos]=takenPlayer;
+    updates["filled2/"+pos]=true;
+  }
+  updates["currentPlayer"]=null;
+  updates["currentBid"]=0;
+  updates["highestBidder"]=0;
+  updates["turn"]=taker;
+  updates["whoPassed"]=0;
+  roomRef.update(updates).then(()=>{
+    setTimeout(()=>{ if(amIHost) newPlayer(); }, 500);
+  });
+}
+
+function skip(){
+  if(turn!=myPlayer) return;
+  let pos = positions[currentPosIndex];
+  let updates={};
+  if(whoPassed==0){
+    updates["whoPassed"]=myPlayer;
+    updates["turn"]=myPlayer==1?2:1;
+  } else if(whoPassed!=myPlayer){
+    updates["filled1/"+pos]=true;
+    updates["filled2/"+pos]=true;
+    updates["whoPassed"]=0;
+    updates["currentPlayer"]=null;
+  }
+  roomRef.update(updates).then(()=>{
+    setTimeout(()=>{ if(amIHost) newPlayer(); }, 500);
+  });
+}
+
+async function updatePitch(){
+  document.getElementById('m1').innerText=m1.toLocaleString();
+  document.getElementById('m2').innerText=m2.toLocaleString();
+  document.getElementById('count').innerText=(currentPosIndex+1)+" / 11";
+  for(let pos of positions){
+    if(t1[pos]){
+      document.getElementById('p1-'+pos).innerHTML=`<img src="${t1[pos].img}"><div class="pos-label">${pos}</div><div class="name">${t1[pos].n.split(' ')[0]}</div>`;
+      document.getElementById('p1-'+pos).classList.remove('empty');
+    }
+    if(t2[pos]){
+      document.getElementById('p2-'+pos).innerHTML=`<img src="${t2[pos].img}"><div class="pos-label">${pos}</div><div class="name">${t2[pos].n.split(' ')[0]}</div>`;
+      document.getElementById('p2-'+pos).classList.remove('empty');
+    }
+  }
+}
+
+async function evaluateGame(){
+  let score1 = Object.values(t1).reduce((a,b)=>a+b.p,0);
+  let score2 = Object.values(t2).reduce((a,b)=>a+b.p,0);
+  let winnerText = score1 > score2? "🏆 الفائز: "+document.getElementById('name1').innerText : score2 > score1? "🏆 الفائز: "+document.getElementById('name2').innerText : "🤝 تعادل";
+  let winnerColor = score1 > score2? "lime" : score2 > score1? "#ff4444" : "#ffd700";
+  document.getElementById('aiText').innerText = "اكتمل التحليل";
+  document.getElementById('resultBox').style.display = "block";
+  document.getElementById('resultBox').innerHTML = `
+    <div style="font-size:24px;font-weight:900;color:${winnerColor};margin-bottom:15px">${winnerText}</div>
+    <div style="display:flex;justify-content:space-between;margin:10px 0"><span>${document.getElementById('name1').innerText}:</span><span style="color:#00aaff;font-weight:700">${(score1/1000000).toFixed(1)} مليون</span></div>
+    <div style="display:flex;justify-content:space-between;margin:10px 0"><span>${document.getElementById('name2').innerText}:</span><span style="color:#ff4444;font-weight:700">${(score2/1000000).toFixed(1)} مليون</span></div>
+    <button onclick="window.location.href='home.html'" style="margin-top:20px;width:100%;background:#ffd700;color:#000">🔄 العودة للرئيسية</button>`;
+}
 </script>
 </body>
 </html>
