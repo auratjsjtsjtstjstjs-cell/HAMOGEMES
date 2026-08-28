@@ -123,7 +123,7 @@ roomRef.on('value', async (snapshot) => {
 })
 
 async function loadData(data){
-  currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;whoPassed=data.whoPassed||0;m1=data.m1 || 200000;m2=data.m2 || 200000;t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};
+  currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;whoPassed=data.whoPassed||0;m1=data.m1 || 200000000;m2=data.m2 || 200000000;t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};
   let currentPos = positions[currentPosIndex];
   if(filled1[currentPos] && filled2[currentPos] && currentPosIndex < 10 && amIHost &&!timerRunning){timerRunning=true;startTimer();return;}
   if(currentPosIndex >= 11 && amIHost){alert("خلص المزاد");return;}
