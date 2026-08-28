@@ -11,33 +11,34 @@ body{background:#0a5c36;color:#fff;font-family:'Cairo',sans-serif;text-align:cen
 .stats{display:flex;justify-content:space-around;background:rgba(17,17,17,0.9);padding:10px;border-radius:10px;margin-bottom:10px}
 .p1{color:#00aaff}.p2{color:#ff4444}
 .turn{background:#ffd700;color:#000;padding:8px;border-radius:8px;font-weight:bold;margin:10px;font-weight:700}
+.timer{font-size:24px;color:#0f0;font-weight:900;background:rgba(0,0,0,0.7);padding:10px;border-radius:10px;margin:10px}
 .field-container{display:flex;justify-content:center;gap:25px;margin-top:40px;flex-wrap:wrap}
-.pitch{width:420px;height:580px;background:#0a5c36;border:3px solid #fff;border-radius:10px;position:relative;overflow:hidden;margin-top:10px}
-.pitch::before{content:'';position:absolute;top:50%;left:0;width:100%;height:2px;background:#fff}
-.pitch::after{content:'';position:absolute;top:50%;left:50%;width:100px;height:100px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%)}
-.penalty{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:250px;height:120px;border:2px solid #fff;border-bottom:none}
-.goal{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:120px;height:40px;border:2px solid #fff;border-bottom:none}
+.pitch{width:420px;height:600px;background:#0a5c36;border:3px solid #fff;border-radius:10px;position:relative;overflow:hidden;margin-top:10px}
+.pitch::before{content:'';position:absolute;top:45%;left:0;width:100%;height:2px;background:#fff}
+.pitch::after{content:'';position:absolute;top:45%;left:50%;width:100px;height:100px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%)}
+.penalty{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:260px;height:130px;border:2px solid #fff;border-bottom:none}
+.goal{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:130px;height:45px;border:2px solid #fff;border-bottom:none}
 .team-title{padding:8px;font-weight:900;font-size:17px;border-radius:8px 8px 0 0;margin-bottom:5px}
 .team-title.blue{background:#00aaff;color:#000}
 .team-title.red{background:#ff4444;color:#fff}
-.player-spot{position:absolute;width:85px;text-align:center;transform:translate(-50%,-50%)}
-.player-spot img{width:55px;height:55px;border-radius:50%;border:3px solid #fff;object-fit:cover;background:#222}
-.player-spot.name{font-size:10px;font-weight:700;margin-top:2px;text-shadow:1px 1px 3px #000;white-space:nowrap}
-.player-spot.pos-label{font-size:9px;color:#ffd700;font-weight:900}
-.player-spot.empty img{opacity:0.3;border:2px dashed #888}
+.player-spot{position:absolute;width:90px;text-align:center;transform:translate(-50%,-50%)}
+.player-spot img{width:58px;height:58px;border-radius:50%;border:3px solid #fff;object-fit:cover;background:#222}
+.player-spot.name{font-size:11px;font-weight:900;margin-top:3px;text-shadow:1px 1px 3px #000;color:#ffd700}
+.player-spot.pos-label{font-size:9px;color:#fff;font-weight:700;position:absolute;top:-18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);padding:1px 5px;border-radius:4px}
+.player-spot.empty img{opacity:0.2;border:2px dashed #888}
 
-/* التشكيل زي الصورة بالظبط */
-.pos-GK{bottom:10%;left:50%}
-.pos-LB{bottom:25%;left:10%}
-.pos-CB1{bottom:20%;left:36%}
-.pos-CB2{bottom:20%;left:64%}
-.pos-RB{bottom:25%;left:90%}
-.pos-CM1{bottom:38%;left:33%}
-.pos-CM2{bottom:38%;left:67%}
-.pos-CAM{bottom:52%;left:50%}
-.pos-LW{bottom:70%;left:15%}
-.pos-ST{bottom:75%;left:50%}
-.pos-RW{bottom:70%;left:85%}
+/* الدفاع جوا ال 18 زي الصورة */
+.pos-GK{bottom:-0.01%;left:50%}
+.pos-CB1{bottom:6%;left:33%}
+.pos-CB2{bottom:6%;left:67%}
+.pos-LB{bottom:15%;left:15%}
+.pos-RB{bottom:15%;left:85%}
+.pos-CM1{bottom:30%;left:32%}
+.pos-CM2{bottom:30%;left:68%}
+.pos-CAM{bottom:45%;left:50%}
+.pos-LW{bottom:63%;left:14%}
+.pos-ST{bottom:67%;left:50%}
+.pos-RW{bottom:63%;left:86%}
 
 .card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:360px;margin:15px auto;background:rgba(17,17,17,0.95)}
 .card img{width:110px;height:110px;border-radius:50%;border:3px solid #ffd700;object-fit:cover;margin-bottom:10px}
@@ -48,20 +49,23 @@ input{width:140px;padding:8px;border-radius:8px;border:2px solid #ffd700;backgro
 button{padding:10px 15px;margin:4px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:16px}
 .bid{background:lime;color:#000}.take{background:red;color:#fff}.skip{background:#555;color:#fff}
 button:disabled{opacity:0.5;cursor:not-allowed}
+.result{font-size:28px;font-weight:900;color:#ffd700;background:rgba(0,0,0,0.8);padding:20px;border-radius:15px;margin:20px}
 </style>
 </head>
 <body>
 
-<h1>⚽ مزاد النجوم - 100 لاعب ⚽</h1>
+<h1>⚽ مزاد النجوم  ⚽</h1>
 <div class="stats"><div class="p1"><span id="name1">انت</span>: <span id="m1">200,000,000</span>$</div><div id="count">1 / 11</div><div class="p2"><span id="name2">الخصم</span>: <span id="m2">200,000,000</span>$</div></div>
 <div class="turn" id="turn">دور المزايدة:...</div>
+<div class="timer" id="timer" style="display:none"></div>
+<div id="result"></div>
 
 <div class="field-container">
   <div><div class="team-title blue" id="team1Title">الفريق الازرق</div><div class="pitch" id="pitch1"><div class="penalty"></div><div class="goal"></div></div></div>
   <div><div class="team-title red" id="team2Title">الفريق الاحمر</div><div class="pitch" id="pitch2"><div class="penalty"></div><div class="goal"></div></div></div>
 </div>
 
-<div class="card">
+<div class="card" id="auctionCard">
   <img id="playerImg" src="https://ui-avatars.com/api/?name=PLAYER&background=333&color=ffd700&size=110&rounded=true">
   <div class="pos" id="pos"></div>
   <div class="name" id="name"></div>
@@ -78,34 +82,34 @@ firebase.initializeApp(firebaseConfig);const db = firebase.database();
 const urlParams = new URLSearchParams(window.location.search);const room = urlParams.get('room');const type = urlParams.get('type') || 'pro';const amIHost = urlParams.get('player') == '1';let myPlayer = amIHost? 1 : 2;
 const positions = ["GK","LB","CB1","CB2","RB","CM1","CM2","CAM","LW","ST","RW"];const PRICE = 1000000;
 
-// استخدمت ui-avatars عشان الصور عمرها ما تتمسح
 function getPlayerImg(name){
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=120&rounded=true&bold=true`
 }
 
 const playersDB = {
-GK: [{n:"Courtois", p:PRICE},{n:"Alisson", p:PRICE},{n:"Ter Stegen", p:PRICE},{n:"Donnarumma", p:PRICE},{n:"Oblak", p:PRICE},{n:"Neuer", p:PRICE},{n:"Ederson", p:PRICE},{n:"E.Martinez", p:PRICE},{n:"Maignan", p:PRICE},{n:"Raya", p:PRICE}],
-LB: [{n:"Davies", p:PRICE},{n:"Robertson", p:PRICE},{n:"T.Hernandez", p:PRICE},{n:"Cancelo", p:PRICE},{n:"N.Mendes", p:PRICE},{n:"L.Shaw", p:PRICE},{n:"Chilwell", p:PRICE},{n:"Dimarco", p:PRICE},{n:"Estupinan", p:PRICE},{n:"Balde", p:PRICE}],
-CB1: [{n:"Van Dijk", p:PRICE},{n:"R.Dias", p:PRICE},{n:"Rudiger", p:PRICE},{n:"Saliba", p:PRICE},{n:"Militao", p:PRICE},{n:"Araujo", p:PRICE},{n:"Marquinhos", p:PRICE},{n:"Gvardiol", p:PRICE},{n:"Gabriel", p:PRICE},{n:"Bastoni", p:PRICE}],
-CB2: [{n:"Kim", p:PRICE},{n:"Konate", p:PRICE},{n:"Romero", p:PRICE},{n:"De Ligt", p:PRICE},{n:"Colwill", p:PRICE},{n:"Hincapie", p:PRICE},{n:"Bremer", p:PRICE},{n:"Van de Ven", p:PRICE},{n:"Pau", p:PRICE},{n:"Guehi", p:PRICE}],
-RB: [{n:"Hakimi", p:PRICE},{n:"TAA", p:PRICE},{n:"Walker", p:PRICE},{n:"Reece", p:PRICE},{n:"Frimpong", p:PRICE},{n:"Pavard", p:PRICE},{n:"Trippier", p:PRICE},{n:"Dumfries", p:PRICE},{n:"Dalot", p:PRICE},{n:"Porro", p:PRICE}],
-CM1: [{n:"Rodri", p:PRICE},{n:"Valverde", p:PRICE},{n:"Kroos", p:PRICE},{n:"Rice", p:PRICE},{n:"Kimmich", p:PRICE},{n:"Odegaard", p:PRICE},{n:"Casemiro", p:PRICE},{n:"Camavinga", p:PRICE},{n:"Tchouameni", p:PRICE},{n:"Barella", p:PRICE}],
-CM2: [{n:"Modric", p:PRICE},{n:"Gundogan", p:PRICE},{n:"Bruno G", p:PRICE},{n:"Caicedo", p:PRICE},{n:"Enzo", p:PRICE},{n:"Zubimendi", p:PRICE},{n:"Tonali", p:PRICE},{n:"Locatelli", p:PRICE},{n:"Gravenberch", p:PRICE},{n:"Mount", p:PRICE}],
-CAM: [{n:"De Bruyne", p:PRICE},{n:"Bellingham", p:PRICE},{n:"Messi", p:PRICE},{n:"B.Fernandes", p:PRICE},{n:"B.Silva", p:PRICE},{n:"Wirtz", p:PRICE},{n:"Musiala", p:PRICE},{n:"Griezmann", p:PRICE},{n:"Maddison", p:PRICE},{n:"Havertz", p:PRICE}],
-LW: [{n:"Neymar", p:PRICE},{n:"Leao", p:PRICE},{n:"Vinicius", p:PRICE},{n:"Sane", p:PRICE},{n:"Rashford", p:PRICE},{n:"Coman", p:PRICE},{n:"Sterling", p:PRICE},{n:"L.Diaz", p:PRICE},{n:"Martinelli", p:PRICE},{n:"Barcola", p:PRICE}],
-ST: [{n:"Haaland", p:PRICE},{n:"Mbappe", p:PRICE},{n:"Lewandowski", p:PRICE},{n:"Kane", p:PRICE},{n:"Lautaro", p:PRICE},{n:"Osimhen", p:PRICE},{n:"Nunez", p:PRICE},{n:"G.Jesus", p:PRICE},{n:"Vlahovic", p:PRICE},{n:"Isak", p:PRICE}],
-RW: [{n:"Salah", p:PRICE},{n:"Saka", p:PRICE},{n:"Mahrez", p:PRICE},{n:"Rodrygo", p:PRICE},{n:"Foden", p:PRICE},{n:"Dembele", p:PRICE},{n:"Bowen", p:PRICE},{n:"P.Neto", p:PRICE},{n:"Grealish", p:PRICE},{n:"Antony", p:PRICE}]
+GK: [{n:"Courtois", p:PRICE, r:92},{n:"Alisson", p:PRICE, r:91},{n:"Ter Stegen", p:PRICE, r:90},{n:"Donnarumma", p:PRICE, r:90},{n:"Oblak", p:PRICE, r:89},{n:"Neuer", p:PRICE, r:89},{n:"Ederson", p:PRICE, r:88},{n:"E.Martinez", p:PRICE, r:87},{n:"Maignan", p:PRICE, r:87},{n:"Raya", p:PRICE, r:86}],
+LB: [{n:"Davies", p:PRICE, r:85},{n:"Robertson", p:PRICE, r:88},{n:"T.Hernandez", p:PRICE, r:86},{n:"Cancelo", p:PRICE, r:87},{n:"N.Mendes", p:PRICE, r:84},{n:"L.Shaw", p:PRICE, r:83},{n:"Chilwell", p:PRICE, r:82},{n:"Dimarco", p:PRICE, r:84},{n:"Estupinan", p:PRICE, r:82},{n:"Balde", p:PRICE, r:83}],
+CB1: [{n:"Van Dijk", p:PRICE, r:90},{n:"R.Dias", p:PRICE, r:89},{n:"Rudiger", p:PRICE, r:88},{n:"Saliba", p:PRICE, r:86},{n:"Militao", p:PRICE, r:85},{n:"Araujo", p:PRICE, r:87},{n:"Marquinhos", p:PRICE, r:88},{n:"Gvardiol", p:PRICE, r:86},{n:"Gabriel", p:PRICE, r:85},{n:"Bastoni", p:PRICE, r:85}],
+CB2: [{n:"Kim", p:PRICE, r:86},{n:"Konate", p:PRICE, r:84},{n:"Romero", p:PRICE, r:85},{n:"De Ligt", p:PRICE, r:86},{n:"Colwill", p:PRICE, r:82},{n:"Hincapie", p:PRICE, r:82},{n:"Bremer", p:PRICE, r:85},{n:"Van de Ven", p:PRICE, r:84},{n:"Pau", p:PRICE, r:83},{n:"Guehi", p:PRICE, r:83}],
+RB: [{n:"Hakimi", p:PRICE, r:87},{n:"TAA", p:PRICE, r:88},{n:"Walker", p:PRICE, r:86},{n:"Reece", p:PRICE, r:85},{n:"Frimpong", p:PRICE, r:84},{n:"Pavard", p:PRICE, r:83},{n:"Trippier", p:PRICE, r:85},{n:"Dumfries", p:PRICE, r:83},{n:"Dalot", p:PRICE, r:82},{n:"Porro", p:PRICE, r:83}],
+CM1: [{n:"Rodri", p:PRICE, r:91},{n:"Valverde", p:PRICE, r:88},{n:"Kroos", p:PRICE, r:89},{n:"Rice", p:PRICE, r:87},{n:"Kimmich", p:PRICE, r:88},{n:"Odegaard", p:PRICE, r:88},{n:"Casemiro", p:PRICE, r:86},{n:"Camavinga", p:PRICE, r:85},{n:"Tchouameni", p:PRICE, r:86},{n:"Barella", p:PRICE, r:87}],
+CM2: [{n:"Modric", p:PRICE, r:88},{n:"Gundogan", p:PRICE, r:87},{n:"Bruno G", p:PRICE, r:89},{n:"Caicedo", p:PRICE, r:85},{n:"Enzo", p:PRICE, r:86},{n:"Zubimendi", p:PRICE, r:84},{n:"Tonali", p:PRICE, r:85},{n:"Locatelli", p:PRICE, r:83},{n:"Gravenberch", p:PRICE, r:83},{n:"Mount", p:PRICE, r:84}],
+CAM: [{n:"De Bruyne", p:PRICE, r:92},{n:"Bellingham", p:PRICE, r:90},{n:"Messi", p:PRICE, r:93},{n:"B.Silva", p:PRICE, r:89},{n:"B.Fernandes", p:PRICE, r:88},{n:"Wirtz", p:PRICE, r:87},{n:"Musiala", p:PRICE, r:88},{n:"Griezmann", p:PRICE, r:87},{n:"Maddison", p:PRICE, r:85},{n:"Havertz", p:PRICE, r:85}],
+LW: [{n:"Neymar", p:PRICE, r:90},{n:"Leao", p:PRICE, r:87},{n:"Vinicius", p:PRICE, r:90},{n:"Sane", p:PRICE, r:86},{n:"Rashford", p:PRICE, r:86},{n:"Coman", p:PRICE, r:85},{n:"Sterling", p:PRICE, r:85},{n:"L.Diaz", p:PRICE, r:86},{n:"Martinelli", p:PRICE, r:85},{n:"Barcola", p:PRICE, r:83}],
+ST: [{n:"Haaland", p:PRICE, r:92},{n:"Mbappe", p:PRICE, r:92},{n:"Lewandowski", p:PRICE, r:90},{n:"Kane", p:PRICE, r:90},{n:"Lautaro", p:PRICE, r:88},{n:"Osimhen", p:PRICE, r:88},{n:"Nunez", p:PRICE, r:85},{n:"G.Jesus", p:PRICE, r:85},{n:"Vlahovic", p:PRICE, r:86},{n:"Isak", p:PRICE, r:86}],
+RW: [{n:"Salah", p:PRICE, r:91},{n:"Saka", p:PRICE, r:88},{n:"Mahrez", p:PRICE, r:86},{n:"Rodrygo", p:PRICE, r:87},{n:"Foden", p:PRICE, r:89},{n:"Dembele", p:PRICE, r:87},{n:"Bowen", p:PRICE, r:84},{n:"P.Neto", p:PRICE, r:83},{n:"Grealish", p:PRICE, r:85},{n:"Antony", p:PRICE, r:82}]
 };
 
 let currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
 let turn=1, m1=200000000, m2=200000000, starter=1;
 let t1={}, t2={};
 let filled1={}, filled2={};
+let timerInterval = null;
 
 function drawPitch(){
   positions.forEach(pos=>{
-    document.getElementById('pitch1').innerHTML += `<div class="player-spot pos-${pos} empty" id="p1-${pos}"><img src="https://ui-avatars.com/api/?name=?&background=222&color=888&size=55&rounded=true"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
-    document.getElementById('pitch2').innerHTML += `<div class="player-spot pos-${pos} empty" id="p2-${pos}"><img src="https://ui-avatars.com/api/?name=?&background=222&color=888&size=55&rounded=true"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
+    document.getElementById('pitch1').innerHTML += `<div class="player-spot pos-${pos} empty" id="p1-${pos}"><div class="pos-label">${pos}</div><img src="https://ui-avatars.com/api/?name=?&background=222&color=888&size=55&rounded=true"><div class="name">-</div></div>`;
+    document.getElementById('pitch2').innerHTML += `<div class="player-spot pos-${pos} empty" id="p2-${pos}"><div class="pos-label">${pos}</div><img src="https://ui-avatars.com/api/?name=?&background=222&color=888&size=55&rounded=true"><div class="name">-</div></div>`;
   })
 }
 drawPitch();
@@ -122,15 +126,40 @@ roomRef.on('value', async (snapshot) => {
 })
 
 async function loadData(data){
-  currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;m1=data.m1 || 200000000;m2=data.m2 || 200000000;t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};
+  currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;
+  m1=data.m1 || 200000000;m2=data.m2 || 200000000;
+  t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};
   let currentPos = positions[currentPosIndex];
-  if(filled1[currentPos] && filled2[currentPos] && currentPosIndex < 10 && amIHost){
-    roomRef.update({currentPos: currentPosIndex + 1})
+
+  if(currentPosIndex >= 11 && amIHost){
+    showWinner();
     return;
   }
-  if(currentPosIndex >= 11 && amIHost){alert("خلص المزاد");return;}
+
+  if(filled1[currentPos] && filled2[currentPos] &&!timerInterval && amIHost){
+    startTimer();
+    return;
+  }
+
   if(!currentPlayer &&!filled1[currentPos] &&!filled2[currentPos] && amIHost) newPlayer();
   await updatePitch();show();
+}
+
+function startTimer(){
+  document.getElementById('auctionCard').style.display='none';
+  document.getElementById('timer').style.display='block';
+  let count=3;
+  timerInterval = setInterval(()=>{
+    document.getElementById('timer').innerText=`المركز القادم: ${positions[currentPosIndex+1]} بعد ${count} ثواني`;
+    count--;
+    if(count<0){
+      clearInterval(timerInterval);
+      timerInterval=null;
+      document.getElementById('timer').style.display='none';
+      document.getElementById('auctionCard').style.display='block';
+      roomRef.update({currentPos: currentPosIndex + 1})
+    }
+  },1000)
 }
 
 function getRandomPlayer(pos){let data = playersDB[pos];return data[Math.floor(Math.random()*data.length)];}
@@ -149,9 +178,11 @@ async function show(){
   document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?document.getElementById('name1').innerText:document.getElementById('name2').innerText) + (myTurn?" - دورك":"");
 }
 
-function bid(){if(turn!=myPlayer) return;let val=parseInt(document.getElementById('bidInput').value);let money=myPlayer==1?m1:m2;if(isNaN(val)){alert("اكتب رقم");return}if(val<=currentBid){alert("لازم تعلي");return}if(val>money){alert("مفيش فلوس");return}roomRef.update({currentBid:val, highestBidder:myPlayer, turn:myPlayer==1?2:1});}
+function bid(){if(turn!=myPlayer) return;let val=parseInt(document.getElementById('bidInput').value);let money=myPlayer==1?m1:m2;
+  if(isNaN(val)){alert("اكتب رقم");return}if(val<=currentBid){alert("لازم تعلي");return}if(val>money){alert("مفيش فلوس");return}
+  roomRef.update({currentBid:val, highestBidder:myPlayer, turn:myPlayer==1?2:1});
+}
 
-// انت دوست خده = الخصم ياخد لاعب المزاد ويدفع. انت تاخد عشوائي ببلاش
 function take(){
   if(turn!=myPlayer) return;
   let pos = positions[currentPosIndex];
@@ -195,15 +226,30 @@ function skip(){
   roomRef.update(updates);
 }
 
+function showWinner(){
+  document.getElementById('auctionCard').style.display='none';
+  let score1=0, score2=0;
+  positions.forEach(pos=>{
+    if(t1[pos]) score1 += t1[pos].r || 80;
+    if(t2[pos]) score2 += t2[pos].r || 80;
+  })
+  let result = "";
+  if(score1 > score2) result = `🏆 ${document.getElementById('name1').innerText} كسب! ${score1} - ${score2}`;
+  else if(score2 > score1) result = `🏆 ${document.getElementById('name2').innerText} كسب! ${score2} - ${score1}`;
+  else result = `تعادل! ${score1} - ${score2}`;
+  document.getElementById('result').innerHTML = `<div class="result">${result}<br><small>التقييم حسب قوة اللعيبة</small></div>`;
+}
+
 async function updatePitch(){
-  document.getElementById('m1').innerText=m1.toLocaleString();document.getElementById('m2').innerText=m2.toLocaleString();document.getElementById('count').innerText=(currentPosIndex+1)+" / 11";
+  document.getElementById('m1').innerText=m1.toLocaleString();document.getElementById('m2').innerText=m2.toLocaleString();
+  document.getElementById('count').innerText=(currentPosIndex+1)+" / 11";
   for(let pos of positions){
     if(t1[pos]){
-      document.getElementById('p1-'+pos).innerHTML=`<img src="${getPlayerImg(t1[pos].n)}"><div class="pos-label">${pos}</div><div class="name">${t1[pos].n}</div>`;
+      document.getElementById('p1-'+pos).innerHTML=`<div class="pos-label">${pos}</div><img src="${getPlayerImg(t1[pos].n)}"><div class="name">${t1[pos].n}</div>`;
       document.getElementById('p1-'+pos).classList.remove('empty');
     }
     if(t2[pos]){
-      document.getElementById('p2-'+pos).innerHTML=`<img src="${getPlayerImg(t2[pos].n)}"><div class="pos-label">${pos}</div><div class="name">${t2[pos].n}</div>`;
+      document.getElementById('p2-'+pos).innerHTML=`<div class="pos-label">${pos}</div><img src="${getPlayerImg(t2[pos].n)}"><div class="name">${t2[pos].n}</div>`;
       document.getElementById('p2-'+pos).classList.remove('empty');
     }
   }
