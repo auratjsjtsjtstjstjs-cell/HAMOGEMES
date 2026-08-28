@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>مزاد النجوم - 100 لاعب</title>
+<title>مزاد النجوم</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -12,31 +12,28 @@ body{background:url('https://i.postimg.cc/06F7XXzk/bg.jpg') center/cover no-repe
 .p1{color:#00aaff}.p2{color:#ff4444}
 .turn{background:#ffd700;color:#000;padding:8px;border-radius:8px;font-weight:bold;margin:10px;font-weight:700}
 .field-container{display:flex;justify-content:center;gap:25px;margin-top:40px;flex-wrap:wrap}
-.pitch{width:380px;height:520px;background:linear-gradient(#0a5c36,#0a5c36);border:3px solid #fff;border-radius:10px;position:relative;overflow:hidden;margin-top:10px}
+.pitch{width:400px;height:550px;background:linear-gradient(#0a5c36,#0a5c36);border:3px solid #fff;border-radius:10px;position:relative;overflow:hidden;margin-top:10px}
 .pitch::before{content:'';position:absolute;top:50%;left:0;width:100%;height:2px;background:#fff}
 .pitch::after{content:'';position:absolute;top:50%;left:50%;width:90px;height:90px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%)}
 .team-title{padding:8px;font-weight:900;font-size:17px;border-radius:8px 8px 0 0;margin-bottom:5px}
 .team-title.blue{background:#00aaff;color:#000}
 .team-title.red{background:#ff4444;color:#fff}
-.player-spot{position:absolute;width:80px;text-align:center;transform:translate(-50%,-50%)}
-.player-spot img{width:52px;height:52px;border-radius:50%;border:2px solid #fff;object-fit:cover;background:#222}
+.player-spot{position:absolute;width:85px;text-align:center;transform:translate(-50%,-50%)}
+.player-spot img{width:55px;height:55px;border-radius:50%;border:2px solid #fff;object-fit:cover;background:#222}
 .player-spot.name{font-size:10px;font-weight:700;margin-top:2px;text-shadow:1px 1px 3px #000;white-space:nowrap}
 .player-spot.pos-label{font-size:9px;color:#ffd700;font-weight:900}
 .player-spot.empty img{opacity:0.2;border:2px dashed #888}
-
-/* التشكيل 4-3-3 */
-.pos-GK{bottom:5%;left:50%}
-.pos-LB{bottom:20%;left:15%}
-.pos-CB1{bottom:20%;left:37%}
-.pos-CB2{bottom:20%;left:63%}
-.pos-RB{bottom:20%;left:85%}
-.pos-CM1{bottom:42%;left:28%}
-.pos-CM2{bottom:42%;left:72%}
-.pos-CAM{bottom:55%;left:50%}
-.pos-LW{bottom:70%;left:16%}
+.pos-GK{bottom:8%;left:50%}
+.pos-LB{bottom:22%;left:12%}
+.pos-CB1{bottom:18%;left:38%}
+.pos-CB2{bottom:18%;left:62%}
+.pos-RB{bottom:22%;left:88%}
+.pos-CM1{bottom:35%;left:32%}
+.pos-CM2{bottom:35%;left:68%}
+.pos-CAM{bottom:50%;left:50%}
+.pos-LW{bottom:70%;left:18%}
 .pos-ST{bottom:75%;left:50%}
-.pos-RW{bottom:70%;left:84%}
-
+.pos-RW{bottom:70%;left:82%}
 .card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:360px;margin:15px auto;background:rgba(17,17,17,0.95)}
 .card img{width:110px;height:110px;border-radius:50%;border:3px solid #ffd700;object-fit:cover;margin-bottom:10px}
 .pos{color:#aaa;font-size:14px;font-weight:400}
@@ -55,18 +52,12 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 <div class="turn" id="turn">دور المزايدة:...</div>
 
 <div class="field-container">
-  <div>
-    <div class="team-title blue" id="team1Title">الفريق الازرق</div>
-    <div class="pitch" id="pitch1"></div>
-  </div>
-  <div>
-    <div class="team-title red" id="team2Title">الفريق الاحمر</div>
-    <div class="pitch" id="pitch2"></div>
-  </div>
+  <div><div class="team-title blue" id="team1Title">الفريق الازرق</div><div class="pitch" id="pitch1"></div></div>
+  <div><div class="team-title red" id="team2Title">الفريق الاحمر</div><div class="pitch" id="pitch2"></div></div>
 </div>
 
 <div class="card">
-  <img id="playerImg" src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'">
+  <img id="playerImg" src="https://i.postimg.cc/3J5sPzQY/player.png">
   <div class="pos" id="pos"></div>
   <div class="name" id="name"></div>
   <div class="price" id="price"></div>
@@ -82,31 +73,29 @@ firebase.initializeApp(firebaseConfig);const db = firebase.database();
 const urlParams = new URLSearchParams(window.location.search);const room = urlParams.get('room');const type = urlParams.get('type') || 'pro';const amIHost = urlParams.get('player') == '1';let myPlayer = amIHost? 1 : 2;
 const positions = ["GK","LB","CB1","CB2","RB","CM1","CM2","CAM","LW","ST","RW"];const PRICE = 1000000;
 
-// استخدمت API جديد بيشتغل + حطيت onerror
 const playersDB = {
-GK: [{n:"Courtois", p:PRICE, img:"https://cdn.sofifa.net/players/192448/25_120.png"},{n:"Alisson", p:PRICE, img:"https://cdn.sofifa.net/players/212831/25_120.png"},{n:"Ter Stegen", p:PRICE, img:"https://cdn.sofifa.net/players/192448/25_120.png"},{n:"Donnarumma", p:PRICE, img:"https://cdn.sofifa.net/players/231281/25_120.png"},{n:"Oblak", p:PRICE, img:"https://cdn.sofifa.net/players/193080/25_120.png"},{n:"Neuer", p:PRICE, img:"https://cdn.sofifa.net/players/167495/25_120.png"},{n:"Ederson", p:PRICE, img:"https://cdn.sofifa.net/players/210514/25_120.png"},{n:"E.Martinez", p:PRICE, img:"https://cdn.sofifa.net/players/201942/25_120.png"},{n:"Maignan", p:PRICE, img:"https://cdn.sofifa.net/players/207865/25_120.png"},{n:"Raya", p:PRICE, img:"https://cdn.sofifa.net/players/219847/25_120.png"}],
-LB: [{n:"Davies", p:PRICE, img:"https://cdn.sofifa.net/players/246669/25_120.png"},{n:"Robertson", p:PRICE, img:"https://cdn.sofifa.net/players/202944/25_120.png"},{n:"T.Hernandez", p:PRICE, img:"https://cdn.sofifa.net/players/231677/25_120.png"},{n:"Cancelo", p:PRICE, img:"https://cdn.sofifa.net/players/209331/25_120.png"},{n:"N.Mendes", p:PRICE, img:"https://cdn.sofifa.net/players/250168/25_120.png"},{n:"L.Shaw", p:PRICE, img:"https://cdn.sofifa.net/players/202126/25_120.png"},{n:"Chilwell", p:PRICE, img:"https://cdn.sofifa.net/players/220697/25_120.png"},{n:"Dimarco", p:PRICE, img:"https://cdn.sofifa.net/players/236691/25_120.png"},{n:"Estupinan", p:PRICE, img:"https://cdn.sofifa.net/players/238794/25_120.png"},{n:"Balde", p:PRICE, img:"https://cdn.sofifa.net/players/255034/25_120.png"}],
-CB1: [{n:"Van Dijk", p:PRICE, img:"https://cdn.sofifa.net/players/203376/25_120.png"},{n:"R.Dias", p:PRICE, img:"https://cdn.sofifa.net/players/237679/25_120.png"},{n:"Rudiger", p:PRICE, img:"https://cdn.sofifa.net/players/212622/25_120.png"},{n:"Saliba", p:PRICE, img:"https://cdn.sofifa.net/players/243413/25_120.png"},{n:"Militao", p:PRICE, img:"https://cdn.sofifa.net/players/236788/25_120.png"},{n:"Araujo", p:PRICE, img:"https://cdn.sofifa.net/players/242684/25_120.png"},{n:"Marquinhos", p:PRICE, img:"https://cdn.sofifa.net/players/205988/25_120.png"},{n:"Gvardiol", p:PRICE, img:"https://cdn.sofifa.net/players/246872/25_120.png"},{n:"Gabriel", p:PRICE, img:"https://cdn.sofifa.net/players/233927/25_120.png"},{n:"Bastoni", p:PRICE, img:"https://cdn.sofifa.net/players/235073/25_120.png"}],
-CB2: [{n:"Kim", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Konate", p:PRICE, img:"https://cdn.sofifa.net/players/234396/25_120.png"},{n:"Romero", p:PRICE, img:"https://cdn.sofifa.net/players/238262/25_120.png"},{n:"De Ligt", p:PRICE, img:"https://cdn.sofifa.net/players/241721/25_120.png"},{n:"Colwill", p:PRICE, img:"https://cdn.sofifa.net/players/252371/25_120.png"},{n:"Hincapie", p:PRICE, img:"https://cdn.sofifa.net/players/246927/25_120.png"},{n:"Bremer", p:PRICE, img:"https://cdn.sofifa.net/players/233444/25_120.png"},{n:"Van de Ven", p:PRICE, img:"https://cdn.sofifa.net/players/246872/25_120.png"},{n:"Pau", p:PRICE, img:"https://cdn.sofifa.net/players/234396/25_120.png"},{n:"Guehi", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}],
-RB: [{n:"Hakimi", p:PRICE, img:"https://cdn.sofifa.net/players/235073/25_120.png"},{n:"TAA", p:PRICE, img:"https://cdn.sofifa.net/players/231677/25_120.png"},{n:"Walker", p:PRICE, img:"https://cdn.sofifa.net/players/168542/25_120.png"},{n:"Reece", p:PRICE, img:"https://cdn.sofifa.net/players/238262/25_120.png"},{n:"Frimpong", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Pavard", p:PRICE, img:"https://cdn.sofifa.net/players/235073/25_120.png"},{n:"Trippier", p:PRICE, img:"https://cdn.sofifa.net/players/182521/25_120.png"},{n:"Dumfries", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Dalot", p:PRICE, img:"https://cdn.sofifa.net/players/235073/25_120.png"},{n:"Porro", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}],
-CM1: [{n:"Rodri", p:PRICE, img:"https://cdn.sofifa.net/players/236788/25_120.png"},{n:"Valverde", p:PRICE, img:"https://cdn.sofifa.net/players/238794/25_120.png"},{n:"Kroos", p:PRICE, img:"https://cdn.sofifa.net/players/182521/25_120.png"},{n:"Rice", p:PRICE, img:"https://cdn.sofifa.net/players/237679/25_120.png"},{n:"Kimmich", p:PRICE, img:"https://cdn.sofifa.net/players/212622/25_120.png"},{n:"Odegaard", p:PRICE, img:"https://cdn.sofifa.net/players/232411/25_120.png"},{n:"Casemiro", p:PRICE, img:"https://cdn.sofifa.net/players/200145/25_120.png"},{n:"Camavinga", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Tchouameni", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Barella", p:PRICE, img:"https://cdn.sofifa.net/players/235073/25_120.png"}],
-CM2: [{n:"Modric", p:PRICE, img:"https://cdn.sofifa.net/players/177003/25_120.png"},{n:"Gundogan", p:PRICE, img:"https://cdn.sofifa.net/players/204485/25_120.png"},{n:"Bruno G", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Caicedo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Enzo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Zubimendi", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Tonali", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Locatelli", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Gravenberch", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Mount", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}],
-CAM: [{n:"De Bruyne", p:PRICE, img:"https://cdn.sofifa.net/players/192448/25_120.png"},{n:"Bellingham", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Messi", p:PRICE, img:"https://cdn.sofifa.net/players/158023/25_120.png"},{n:"B.Fernandes", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"B.Silva", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Wirtz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Musiala", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Griezmann", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Maddison", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Havertz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}],
-LW: [{n:"Neymar", p:PRICE, img:"https://cdn.sofifa.net/players/190871/25_120.png"},{n:"Leao", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Vinicius", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Sane", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Rashford", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Coman", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Sterling", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"L.Diaz", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Martinelli", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Barcola", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}],
-ST: [{n:"Haaland", p:PRICE, img:"https://cdn.sofifa.net/players/240088/25_120.png"},{n:"Mbappe", p:PRICE, img:"https://cdn.sofifa.net/players/231747/25_120.png"},{n:"Lewandowski", p:PRICE, img:"https://cdn.sofifa.net/players/188545/25_120.png"},{n:"Kane", p:PRICE, img:"https://cdn.sofifa.net/players/202126/25_120.png"},{n:"Lautaro", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Osimhen", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Nunez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"G.Jesus", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Vlahovic", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Isak", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}],
-RW: [{n:"Salah", p:PRICE, img:"https://cdn.sofifa.net/players/209331/25_120.png"},{n:"Saka", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Mahrez", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Rodrygo", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Foden", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Dembele", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Bowen", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"P.Neto", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Grealish", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"},{n:"Antony", p:PRICE, img:"https://cdn.sofifa.net/players/246427/25_120.png"}]
+GK: [{n:"Courtois", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/courtois.jpg"},{n:"Alisson", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/alisson.jpg"},{n:"Ter Stegen", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/terstegen.jpg"},{n:"Donnarumma", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/donnarumma.jpg"},{n:"Oblak", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/oblak.jpg"},{n:"Neuer", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/neuer.jpg"},{n:"Ederson", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/ederson.jpg"},{n:"E.Martinez", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/martinez.jpg"},{n:"Maignan", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/maignan.jpg"},{n:"Raya", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/raya.jpg"}],
+LB: [{n:"Davies", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/davies.jpg"},{n:"Robertson", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/robertson.jpg"},{n:"T.Hernandez", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/hernandez.jpg"},{n:"Cancelo", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/cancelo.jpg"},{n:"N.Mendes", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/nmendes.jpg"},{n:"L.Shaw", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/shaw.jpg"},{n:"Chilwell", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/chilwell.jpg"},{n:"Dimarco", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/dimarco.jpg"},{n:"Estupinan", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/estupinan.jpg"},{n:"Balde", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/balde.jpg"}],
+CB1: [{n:"Van Dijk", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/vandijk.jpg"},{n:"R.Dias", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/rdias.jpg"},{n:"Rudiger", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/rudiger.jpg"},{n:"Saliba", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/saliba.jpg"},{n:"Militao", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/militao.jpg"},{n:"Araujo", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/araujo.jpg"},{n:"Marquinhos", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/marquinhos.jpg"},{n:"Gvardiol", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/gvardiol.jpg"},{n:"Gabriel", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/gabriel.jpg"},{n:"Bastoni", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/bastoni.jpg"}],
+CB2: [{n:"Kim", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/kim.jpg"},{n:"Konate", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/konate.jpg"},{n:"Romero", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/romero.jpg"},{n:"De Ligt", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/deligt.jpg"},{n:"Colwill", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/colwill.jpg"},{n:"Hincapie", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/hincapie.jpg"},{n:"Bremer", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/bremer.jpg"},{n:"Van de Ven", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/vdven.jpg"},{n:"Pau", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/pautorres.jpg"},{n:"Guehi", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/guehi.jpg"}],
+RB: [{n:"Hakimi", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/hakimi.jpg"},{n:"TAA", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/taa.jpg"},{n:"Walker", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/walker.jpg"},{n:"Reece", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/reecejames.jpg"},{n:"Frimpong", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/frimpong.jpg"},{n:"Pavard", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/pavard.jpg"},{n:"Trippier", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/trippier.jpg"},{n:"Dumfries", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/dumfries.jpg"},{n:"Dalot", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/dalot.jpg"},{n:"Porro", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/porro.jpg"}],
+CM1: [{n:"Rodri", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/rodri.jpg"},{n:"Valverde", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/valverde.jpg"},{n:"Kroos", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/kroos.jpg"},{n:"Rice", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/rice.jpg"},{n:"Kimmich", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/kimmich.jpg"},{n:"Odegaard", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/odegaard.jpg"},{n:"Casemiro", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/casemiro.jpg"},{n:"Camavinga", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/camavinga.jpg"},{n:"Tchouameni", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/tchouameni.jpg"},{n:"Barella", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/barella.jpg"}],
+CM2: [{n:"Modric", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/modric.jpg"},{n:"Gundogan", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/gundogan.jpg"},{n:"Bruno G", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/brunog.jpg"},{n:"Caicedo", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/caicedo.jpg"},{n:"Enzo", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/enzo.jpg"},{n:"Zubimendi", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/zubimendi.jpg"},{n:"Tonali", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/tonali.jpg"},{n:"Locatelli", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/locatelli.jpg"},{n:"Gravenberch", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/gravenberch.jpg"},{n:"Mount", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/mount.jpg"}],
+CAM: [{n:"De Bruyne", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/debruyne.jpg"},{n:"Bellingham", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/bellingham.jpg"},{n:"Messi", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/messi.jpg"},{n:"B.Fernandes", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/bfernandes.jpg"},{n:"B.Silva", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/bsilva.jpg"},{n:"Wirtz", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/wirtz.jpg"},{n:"Musiala", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/musiala.jpg"},{n:"Griezmann", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/griezmann.jpg"},{n:"Maddison", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/maddison.jpg"},{n:"Havertz", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/havertz.jpg"}],
+LW: [{n:"Neymar", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/neymar.jpg"},{n:"Leao", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/leao.jpg"},{n:"Vinicius", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/vinicius.jpg"},{n:"Sane", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/sane.jpg"},{n:"Rashford", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/rashford.jpg"},{n:"Coman", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/coman.jpg"},{n:"Sterling", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/sterling.jpg"},{n:"L.Diaz", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/ldiaz.jpg"},{n:"Martinelli", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/martinelli.jpg"},{n:"Barcola", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/barcola.jpg"}],
+ST: [{n:"Haaland", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/haaland.jpg"},{n:"Mbappe", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/mbappe.jpg"},{n:"Lewandowski", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/lewa.jpg"},{n:"Kane", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/kane.jpg"},{n:"Lautaro", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/lautaro.jpg"},{n:"Osimhen", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/osimhen.jpg"},{n:"Nunez", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/nunez.jpg"},{n:"G.Jesus", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/gjesus.jpg"},{n:"Vlahovic", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/vlahovic.jpg"},{n:"Isak", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/isak.jpg"}],
+RW: [{n:"Salah", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/salah.jpg"},{n:"Saka", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/saka.jpg"},{n:"Mahrez", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/mahrez.jpg"},{n:"Rodrygo", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/rodrygo.jpg"},{n:"Foden", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/foden.jpg"},{n:"Dembele", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/dembele.jpg"},{n:"Bowen", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/bowen.jpg"},{n:"P.Neto", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/pneto.jpg"},{n:"Grealish", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/grealish.jpg"},{n:"Antony", p:PRICE, img:"https://i.postimg.cc/Nf1Qp8gT/antony.jpg"}]
 };
 
 let currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
-let turn=1, m1=200000000, m2=200000000, starter=1;
+let turn=1, m1=200000, m2=200000, starter=1;
 let t1={}, t2={};
 let filled1={}, filled2={};
-let whoPassed=0, timerRunning=false;
 
 function drawPitch(){
   positions.forEach(pos=>{
-    document.getElementById('pitch1').innerHTML += `<div class="player-spot pos-${pos} empty" id="p1-${pos}"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
-    document.getElementById('pitch2').innerHTML += `<div class="player-spot pos-${pos} empty" id="p2-${pos}"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
+    document.getElementById('pitch1').innerHTML += `<div class="player-spot pos-${pos} empty" id="p1-${pos}"><img src="https://i.postimg.cc/3J5sPzQY/player.png"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
+    document.getElementById('pitch2').innerHTML += `<div class="player-spot pos-${pos} empty" id="p2-${pos}"><img src="https://i.postimg.cc/3J5sPzQY/player.png"><div class="pos-label">${pos}</div><div class="name">-</div></div>`;
   })
 }
 drawPitch();
@@ -123,15 +112,16 @@ roomRef.on('value', async (snapshot) => {
 })
 
 async function loadData(data){
-  currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;whoPassed=data.whoPassed||0;m1=data.m1 || 200000000;m2=data.m2 || 200000000;t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};
+  currentPosIndex=data.currentPos||0;currentBid=data.currentBid||0;highestBidder=data.highestBidder||0;turn=data.turn||1;starter=data.starter||1;m1=data.m1 || 200000;m2=data.m2 || 200000;t1=data.t1 || {};t2=data.t2 || {};currentPlayer=data.currentPlayer || null;filled1=data.filled1 || {};filled2=data.filled2 || {};
   let currentPos = positions[currentPosIndex];
-  if(filled1[currentPos] && filled2[currentPos] && currentPosIndex < 10 && amIHost &&!timerRunning){timerRunning=true;startTimer();return;}
+  if(filled1[currentPos] && filled2[currentPos] && currentPosIndex < 10 && amIHost){
+    roomRef.update({currentPos: currentPosIndex + 1})
+    return;
+  }
   if(currentPosIndex >= 11 && amIHost){alert("خلص المزاد");return;}
   if(!currentPlayer &&!filled1[currentPos] &&!filled2[currentPos] && amIHost) newPlayer();
   await updatePitch();show();
 }
-
-function startTimer(){let count=3;let nextPosName = positions[currentPosIndex + 1];let interval = setInterval(()=>{count--;if(count<=0){clearInterval(interval);let nextStarter = starter==1? 2 : 1;roomRef.update({currentPos: currentPosIndex + 1, starter: nextStarter, turn: nextStarter, whoPassed:0}).then(()=>{timerRunning=false});}},1000);}
 
 function getRandomPlayer(pos){let data = playersDB[pos];return data[Math.floor(Math.random()*data.length)];}
 function newPlayer(){let posName=positions[currentPosIndex];let p = getRandomPlayer(posName);roomRef.update({ currentBid: p.p, currentPlayer: p })}
@@ -140,7 +130,7 @@ async function show(){
   if(!currentPlayer) return;
   document.getElementById('pos').innerText="المركز: " + positions[currentPosIndex];
   document.getElementById('name').innerText=currentPlayer.n;
-  document.getElementById('playerImg').src = currentPlayer.img; // الصورة
+  document.getElementById('playerImg').src = currentPlayer.img;
   document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
   document.getElementById('bidInput').value=currentBid+1000000;
   let myTurn = turn==myPlayer;
@@ -151,32 +141,59 @@ async function show(){
 
 function bid(){if(turn!=myPlayer) return;let val=parseInt(document.getElementById('bidInput').value);let money=myPlayer==1?m1:m2;if(isNaN(val)){alert("اكتب رقم");return}if(val<=currentBid){alert("لازم تعلي");return}if(val>money){alert("مفيش فلوس");return}roomRef.update({currentBid:val, highestBidder:myPlayer, turn:myPlayer==1?2:1});}
 
+// منطق "خده" الصح: الخصم ياخد لاعب المزاد ويدفع. انا اخد عشوائي ببلاش
 function take(){
   if(turn!=myPlayer) return;
-  let receiver = myPlayer==1? 2 : 1;let taker = myPlayer;let takenPlayer = currentPlayer;let pos = positions[currentPosIndex];let updates={};
-  if(receiver==1){updates["m1"]=m1-currentBid;updates["t1/"+pos]=takenPlayer;updates["filled1/"+pos]=true;}
-  else {updates["m2"]=m2-currentBid;updates["t2/"+pos]=takenPlayer;updates["filled2/"+pos]=true;}
-  updates["currentPlayer"]=null;updates["currentBid"]=0;updates["highestBidder"]=0;updates["turn"]=taker;updates["whoPassed"]=0;
-  roomRef.update(updates).then(()=>{setTimeout(()=>{ if(amIHost) newPlayer(); }, 500);});
+  let pos = positions[currentPosIndex];
+  let taker = myPlayer;
+  let other = myPlayer==1? 2 : 1;
+  let auctionPlayer = currentPlayer;
+  let randomPlayer = getRandomPlayer(pos);
+
+  let updates={};
+  if(other==1){
+    updates["m1"]=m1-currentBid;
+    updates["t1/"+pos]=auctionPlayer;
+    updates["filled1/"+pos]=true;
+  } else {
+    updates["m2"]=m2-currentBid;
+    updates["t2/"+pos]=auctionPlayer;
+    updates["filled2/"+pos]=true;
+  }
+
+  if(taker==1){
+    updates["t1/"+pos]=randomPlayer;
+    updates["filled1/"+pos]=true;
+  } else {
+    updates["t2/"+pos]=randomPlayer;
+    updates["filled2/"+pos]=true;
+  }
+
+  updates["currentPlayer"]=null;updates["currentBid"]=0;updates["highestBidder"]=0;
+  roomRef.update(updates);
 }
 
 function skip(){
   if(turn!=myPlayer) return;
-  let pos = positions[currentPosIndex];let updates={};
-  if(whoPassed==0){updates["whoPassed"]=myPlayer;updates["turn"]=myPlayer==1?2:1;}
-  else if(whoPassed!=myPlayer){updates["filled1/"+pos]=true;updates["filled2/"+pos]=true;updates["whoPassed"]=0;updates["currentPlayer"]=null;}
-  roomRef.update(updates).then(()=>{setTimeout(()=>{ if(amIHost) newPlayer(); }, 500);});
+  let pos = positions[currentPosIndex];
+  let updates={};
+  updates["t1/"+pos]=getRandomPlayer(pos);
+  updates["t2/"+pos]=getRandomPlayer(pos);
+  updates["filled1/"+pos]=true;
+  updates["filled2/"+pos]=true;
+  updates["currentPlayer"]=null;
+  roomRef.update(updates);
 }
 
 async function updatePitch(){
   document.getElementById('m1').innerText=m1.toLocaleString();document.getElementById('m2').innerText=m2.toLocaleString();document.getElementById('count').innerText=(currentPosIndex+1)+" / 11";
   for(let pos of positions){
     if(t1[pos]){
-      document.getElementById('p1-'+pos).innerHTML=`<img src="${t1[pos].img}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'"><div class="pos-label">${pos}</div><div class="name">${t1[pos].n}</div>`;
+      document.getElementById('p1-'+pos).innerHTML=`<img src="${t1[pos].img}"><div class="pos-label">${pos}</div><div class="name">${t1[pos].n}</div>`;
       document.getElementById('p1-'+pos).classList.remove('empty');
     }
     if(t2[pos]){
-      document.getElementById('p2-'+pos).innerHTML=`<img src="${t2[pos].img}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'"><div class="pos-label">${pos}</div><div class="name">${t2[pos].n}</div>`;
+      document.getElementById('p2-'+pos).innerHTML=`<img src="${t2[pos].img}"><div class="pos-label">${pos}</div><div class="name">${t2[pos].n}</div>`;
       document.getElementById('p2-'+pos).classList.remove('empty');
     }
   }
