@@ -5,29 +5,48 @@
 <title>مزاد النجوم - ضد AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-body{background:#0a0a0a;color:#fff;font-family:'Cairo',sans-serif;text-align:center;padding:10px}
+body{background:#0a0a0a;color:#fff;font-family:'Cairo',sans-serif;text-align:center;padding:10px;margin:0}
 .stats{display:flex;justify-content:space-around;background:#111;padding:10px;border-radius:10px;margin-bottom:10px}
 .p1{color:#00aaff}.p2{color:#ff4444}
 .turn{background:#ffd700;color:#000;padding:8px;border-radius:8px;font-weight:bold;margin:10px;font-weight:700}
-.field{display:flex;justify-content:space-around}
-.team{width:48%;background:#111;border:2px solid #333;border-radius:10px;padding:10px}
-.slot{border:2px solid #555;background:#000;margin:5px;padding:12px;border-radius:8px;font-size:13px;min-height:25px;font-weight:700}
-.slot.filled{border-color:#ffd700;background:#1a1a1a}
-.card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:320px;margin:15px auto;background:#111}
-.pos{color:#aaa;font-size:14px;font-weight:400}
-.name{font-size:22px;color:#ffd700;margin:5px;font-weight:900}
-.price{font-size:18px;color:#0f0;font-weight:700}
-input{width:130px;padding:8px;border-radius:8px;border:2px solid #ffd700;background:#222;color:#fff;text-align:center;font-family:'Cairo'}
-button{padding:10px 15px;margin:4px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:16px}
-.bid{background:lime;color:#000}.take{background:red;color:#fff}.skip{background:#555;color:#fff}
-button:disabled{opacity:0.5;cursor:not-allowed}
+.card{border:3px solid #ffd700;border-radius:15px;padding:15px;width:350px;margin:15px auto;background:#111}
+.fields-wrapper{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+.pitch{
+  width:95%;max-width:900px;aspect-ratio: 16 / 9;
+  background-image: url('https://i.postimg.cc/JsW3xWN9/field.png');
+  background-size: 100% 100%;background-repeat: no-repeat;background-position: center;
+  border:3px solid #fff;border-radius:12px;position:relative
+}
+.team-label{position:absolute;top:8px;width:100%;text-align:center;font-weight:900;font-size:20px;text-shadow:2px 2px 5px #000}
+.player-slot{
+  position:absolute;width:38px;height:38px;background:rgba(0,0,0,0.9);border:2px solid #fff;
+  border-radius:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;
+  flex-direction:column;font-size:6px;font-weight:900;text-align:center;z-index:10;padding:1px
+}
+.player-slot.filled{border-color:#ffd700;background:rgba(255,215,0,0.3);box-shadow:0 0 8px #ffd700}
+.pos-name{color:#ddd;font-size:6px}.player-name{color:#fff;font-size:7px}
+.pos-GK{left:5.5%;top:50%}
+.pos-CB1{left:21%;top:33%}.pos-CB2{left:21%;top:67%}
+.pos-LB{left:21%;top:8%}.pos-RB{left:21%;top:92%}
+.pos-CM1{left:44%;top:33%}.pos-CM2{left:44%;top:67%}
+.pos-CAM{left:58%;top:50%}
+.pos-LW{left:78%;top:22%}.pos-ST{left:90%;top:50%}.pos-RW{left:78%;top:78%}
 #loading{ position:fixed;top:0;left:0;width:100%;height:100%; background:radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%); display:none;justify-content:center; align-items:center;flex-direction:column;z-index:999; }
-.ball{ width:120px;height:120px;border-radius:50%; background:conic-gradient(from 0deg, #fff 0deg 45deg, #000 45deg 90deg, #fff 90deg 135deg, #000 135deg 180deg, #fff 180deg 225deg, #000 225deg 270deg, #fff 270deg 315deg, #000 315deg 360deg); animation:spin 1.5s linear infinite; box-shadow:0 0 40px #ffd700, 0 0 80px #ffd700; border:4px solid #ffd700; }
+.ball{ width:100px;height:100px;border-radius:50%; background:conic-gradient(from 0deg, #fff 0deg 45deg, #000 45deg 90deg, #fff 90deg 135deg, #000 135deg 180deg, #fff 180deg 225deg, #000 225deg 270deg, #fff 270deg 315deg, #000 315deg 360deg); animation:spin 1.5s linear infinite; box-shadow:0 0 30px #ffd700; border:3px solid #ffd700; }
 @keyframes spin{100%{transform:rotate(360deg)}}
-#aiText{margin-top:30px;font-size:28px;color:#ffd700;font-weight:900;text-shadow:0 0 10px #ffd700;animation:pulse 1.5s infinite}
-#aiSubText{margin-top:10px;font-size:18px;color:#aaa;font-weight:700}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.result-box{ background:#111;border:2px solid #ffd700;border-radius:20px; padding:25px;margin-top:20px;width:80%;max-width:400px }
+#aiText{margin-top:20px;font-size:24px;color:#ffd700;font-weight:900}
+.result-box{ background:#111;border:2px solid #ffd700;border-radius:20px; padding:20px;margin-top:20px;width:80%;max-width:400px }
+.pos{color:#aaa;font-size:14px}.name{font-size:22px;color:#ffd700;margin:5px;font-weight:900}
+.price{font-size:18px;color:#0f0;font-weight:700}
+.bid-box{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.bid-box button{padding:10px 15px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:18px}
+.btn-minus{background:#ff4444;color:#fff;width:45px}
+.btn-plus{background:lime;color:#000;width:45px}
+.btn-take{background:red;color:#fff;padding:10px 20px;font-size:16px}
+.btn-bid{background:#00aaff;color:#fff;padding:10px 20px;font-size:16px}
+.current-bid-display{background:#222;border:2px solid #ffd700;border-radius:8px;padding:10px 15px;font-size:16px;font-weight:900;color:#ffd700;min-width:120px}
+button:disabled{opacity:0.5}
+.skip{background:#555;color:#fff;padding:10px 15px;margin-top:8px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-family:'Cairo';font-size:16px}
 </style>
 </head>
 <body>
@@ -35,183 +54,250 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 <h1>⚽ مزاد النجوم - ضد الذكاء الاصطناعي ⚽</h1>
 <div class="stats"><div class="p1">انت: <span id="m1">200,000,000</span>$</div><div id="count">1 / 11</div><div class="p2">AI: <span id="m2">200,000,000</span>$</div></div>
 <div class="turn" id="turn">دور المزايدة: انت</div>
-<div class="field"><div class="team"><h3 class="p1">فريقك</h3><div id="t1"></div></div><div class="team"><h3 class="p2">فريق AI</h3><div id="t2"></div></div></div>
-<div class="card"><div class="pos" id="pos"></div><div class="name" id="name"></div><div class="price" id="price"></div><input id="bidInput" type="number" placeholder="اكتب المزايدة"><br><button class="bid" id="bidBtn" onclick="bid()">مزايدة</button><button class="take" id="takeBtn" onclick="take()">خده</button><button class="skip" onclick="skip()">تخطي</button></div>
-<div id="loading"><div class="ball"></div><div id="aiText">الذكاء الاصطناعي يحلل</div><div id="aiSubText">جاري تقييم التشكيلات...</div><div class="result-box" id="resultBox" style="display:none;"></div></div>
+
+<div class="fields-wrapper">
+  <div class="pitch"><div class="team-label p1">فريقك</div><div id="t1"></div></div>
+  <div class="pitch"><div class="team-label p2">فريق AI</div><div id="t2"></div></div>
+</div>
+
+<div class="card">
+  <div class="pos" id="pos"></div>
+  <div class="name" id="name"></div>
+  <div class="price" id="price"></div>
+  <div class="bid-box">
+    <button class="btn-minus" id="minusBtn" onclick="decreaseBid()">-</button>
+    <div class="current-bid-display" id="currentBidDisplay">0$</div>
+    <button class="btn-plus" id="plusBtn" onclick="increaseBid()">+</button>
+    <button class="btn-take" id="takeBtn" onclick="take()">خده</button>
+    <button class="btn-bid" id="bidBtn" onclick="bid()">مزايدة</button>
+  </div>
+  <button class="skip" onclick="skip()">تخطي</button>
+</div>
+
+<div id="loading"><div class="ball"></div><div id="aiText">الذكاء الاصطناعي يحلل</div><div class="result-box" id="resultBox" style="display:none;"></div></div>
 
 <script>
 const positions = ["GK","LB","CB1","CB2","RB","CAM","CM1","CM2","RW","ST","LW"];
 let usedPlayers = [];
 
-// 70+ لاعب عشان ميخلصوش
+// 210 لاعب - 10 نجوم + 10 عاديين لكل مركز
 const playersDB = {
-GK: { star: [{n:"كورتوا ⭐", p:15000000}, {n:"اليسون ⭐", p:14000000}, {n:"تير شتيجن ⭐", p:13000000}, {n:"دوناروما ⭐", p:14500000}, {n:"اوبلاك ⭐", p:13500000}, {n:"نوير ⭐", p:12000000}, {n:"ادرسون ⭐", p:12500000}], common: [{n:"تراب", p:7000000}, {n:"مندي", p:6000000}, {n:"رايا", p:8500000}, {n:"مارتينيز", p:9000000}, {n:"بيكفورد", p:7500000}, {n:"سومر", p:6500000}, {n:"اونانا", p:8000000}] },
-ST: { star: [{n:"هالاند ⭐", p:60000000}, {n:"مبابي ⭐", p:65000000}, {n:"ليفاندوفسكي ⭐", p:50000000}, {n:"كين ⭐", p:55000000}, {n:"بنزيما ⭐", p:48000000}, {n:"سواريز ⭐", p:40000000}], common: [{n:"جيرو", p:20000000}, {n:"ووتكينز", p:30000000}, {n:"ايساك", p:35000000}, {n:"داروين", p:32000000}, {n:"خيسوس", p:28000000}, {n:"تونى", p:27000000}] },
-RW: { star: [{n:"محمد صلاح ⭐", p:50000000}, {n:"ساكا ⭐", p:45000000}, {n:"راشفورد ⭐", p:42000000}, {n:"جرينليش ⭐", p:40000000}, {n:"ديابي ⭐", p:38000000}], common: [{n:"انطوني", p:35000000}, {n:"محرز", p:30000000}, {n:"بودينس", p:20000000}] },
-CAM: { star: [{n:"دي بروين ⭐", p:50000000}, {n:"بيلينجهام ⭐", p:55000000}, {n:"ميسي ⭐", p:60000000}, {n:"برونو ⭐", p:45000000}, {n:"اوديجارد ⭐", p:40000000}, {n:"فودين ⭐", p:48000000}], common: [{n:"ديبالا", p:35000000}, {n:"ماديسون", p:32000000}, {n:"كوتينيو", p:25000000}] },
-CM: { star: [{n:"رودري ⭐", p:45000000}, {n:"فالفيردي ⭐", p:40000000}, {n:"كروس ⭐", p:35000000}, {n:"مودريتش ⭐", p:30000000}, {n:"كاسيميرو ⭐", p:28000000}, {n:"كامافينجا ⭐", p:38000000}], common: [{n:"رايس", p:40000000}, {n:"باريلا", p:26000000}, {n:"جوندوجان", p:25000000}, {n:"فابينيو", p:22000000}] },
-CB: { star: [{n:"فان دايك ⭐", p:40000000}, {n:"روبن دياز ⭐", p:38000000}, {n:"روديجر ⭐", p:35000000}, {n:"سالiba ⭐", p:37000000}, {n:"اراوخو ⭐", p:36000000}, {n:"ماركينيوس ⭐", p:34000000}], common: [{n:"جفارديول", p:40000000}, {n:"تومياسو", p:20000000}, {n:"جابرييل", p:22000000}, {n:"كونسا", p:18000000}, {n:"روميرو", p:25000000}] },
-LB: { star: [{n:"الفونسو ديفيز ⭐", p:35000000}, {n:"روبرتسون ⭐", p:30000000}, {n:"ثيو ⭐", p:32000000}, {n:"كانسيلو ⭐", p:33000000}], common: [{n:"جوسينس", p:17000000}, {n:"تشيلويل", p:22000000}, {n:"شو", p:20000000}] },
-RB: { star: [{n:"اشرف حكيمي ⭐", p:40000000}, {n:"ترينت ⭐", p:38000000}, {n:"ووكر ⭐", p:30000000}, {n:"رايس جيمس ⭐", p:35000000}], common: [{n:"بافارد", p:25000000}, {n:"توموري", p:20000000}, {n:"دالوت", p:18000000}] },
-LW: { star: [{n:"نيمار ⭐", p:45000000}, {n:"لياو ⭐", p:42000000}, {n:"فينيسيوس ⭐", p:62000000}, {n:"ساني ⭐", p:40000000}, {n:"كومان ⭐", p:38000000}], common: [{n:"باركولا", p:30000000}, {n:"مارتينيلي", p:35000000}, {n:"جريليش", p:28000000}] }
+GK: {
+  star: [
+    {n:"كورتوا ⭐", p:15000000},{n:"اليسون ⭐", p:14000000},{n:"اوبلاك ⭐", p:13000000},{n:"دوناروما ⭐", p:12000000},{n:"تير شتيجن ⭐", p:11000000},
+    {n:"نوير ⭐", p:10000000},{n:"ايدرسون ⭐", p:12000000},{n:"مارتينيز ⭐", p:9000000},{n:"تشيزني ⭐", p:8000000},{n:"ميليان ⭐", p:7000000}
+  ],
+  common: [
+    {n:"تراب", p:7000000},{n:"مندي", p:6500000},{n:"رايا", p:6000000},{n:"اونانا", p:5500000},{n:"بيكفورد", p:5000000},
+    {n:"بوب", p:4500000},{n:"هندرسون", p:4000000},{n:"فورد", p:3500000},{n:"سيلسن", p:3000000},{n:"لينو", p:2500000}
+  ]
+},
+ST: {
+  star: [
+    {n:"هالاند ⭐", p:60000000},{n:"مبابي ⭐", p:65000000},{n:"ليفاندوفسكي ⭐", p:40000000},{n:"كين ⭐", p:55000000},{n:"بنزيما ⭐", p:45000000},
+    {n:"صلاح مهاجم ⭐", p:50000000},{n:"نيمار مهاجم ⭐", p:45000000},{n:"راشفورد مهاجم ⭐", p:40000000},{n:"سون ⭐", p:42000000},{n:"جريزمان ⭐", p:38000000}
+  ],
+  common: [
+    {n:"جيرو", p:20000000},{n:"داروين", p:35000000},{n:"اوسيمين", p:45000000},{n:"فلاهوفيتش", p:40000000},{n:"توني", p:25000000},
+    {n:"واتكينز", p:30000000},{n:"جيسوس", p:32000000},{n:"ايساك", p:38000000},{n:"جاكسون", p:28000000},{n:"هويلوند", p:35000000}
+  ]
+},
+RW: {
+  star: [
+    {n:"محمد صلاح ⭐", p:50000000},{n:"ساكا ⭐", p:45000000},{n:"راشفورد ⭐", p:40000000},{n:"محرز ⭐", p:35000000},{n:"جنابري ⭐", p:38000000},
+    {n:"ديمبيلي ⭐", p:40000000},{n:"لياو ⭐", p:45000000},{n:"باركولا ⭐", p:35000000},{n:"دوكي ⭐", p:42000000},{n:"مادويكي ⭐", p:30000000}
+  ],
+  common: [
+    {n:"انطوني", p:35000000},{n:"كولوسيفسكي", p:30000000},{n:"بودينس", p:15000000},{n:"بوين", p:25000000},{n:"ديابي", p:28000000},
+    {n:"جونسون", p:22000000},{n:"نيلسون", p:18000000},{n:"تراوري", p:12000000},{n:"بينما", p:20000000},{n:"كويزانو", p:16000000}
+  ]
+},
+LW: {
+  star: [
+    {n:"نيمار ⭐", p:45000000},{n:"فينيسيوس ⭐", p:60000000},{n:"ساني ⭐", p:42000000},{n:"جريليش ⭐", p:38000000},{n:"فودين ⭐", p:45000000},
+    {n:"مارتينيلي ⭐", p:35000000},{n:"لويس دياز ⭐", p:40000000},{n:"سترلينج ⭐", p:32000000},{n:"كومان ⭐", p:30000000},{n:"باركولا ⭐", p:30000000}
+  ],
+  common: [
+    {n:"تروسار", p:25000000},{n:"ميرفي", p:20000000},{n:"جوردون", p:30000000},{n:"ميتوما", p:35000000},{n:"انطونيو", p:18000000},
+    {n:"ولباك", p:15000000},{n:"اداما", p:12000000},{n:"سينيسي", p:14000000},{n:"جاكبو", p:32000000},{n:"جاكسون LW", p:25000000}
+  ]
+},
+CAM: {
+  star: [
+    {n:"دي بروين ⭐", p:50000000},{n:"برونو ⭐", p:45000000},{n:"بيلينجهام ⭐", p:55000000},{n:"موسيالا ⭐", p:48000000},{n:"اوديجارد ⭐", p:42000000},
+    {n:"سيلفا ⭐", p:40000000},{n:"فودين CAM ⭐", p:45000000},{n:"ماديسون ⭐", p:35000000},{n:"باكيتا ⭐", p:38000000},{n:"سوبوسلاي ⭐", p:40000000}
+  ],
+  common: [
+    {n:"ديبالا", p:35000000},{n:"جروس", p:15000000},{n:"ايزي", p:25000000},{n:"ماك اليستر", p:40000000},{n:"فيرجسون", p:30000000},
+    {n:"بومو", p:28000000},{n:"رودجرز", p:22000000},{n:"جيمس CAM", p:20000000},{n:"اولسون", p:18000000},{n:"تيلمانس", p:25000000}
+  ]
+},
+CM: {
+  star: [
+    {n:"رودري ⭐", p:45000000},{n:"كاسيميرو ⭐", p:40000000},{n:"فالفيردي ⭐", p:48000000},{n:"بيدري ⭐", p:45000000},{n:"كامافينجا ⭐", p:42000000},
+    {n:"دي يونج ⭐", p:40000000},{n:"جافي ⭐", p:38000000},{n:"رايس CM ⭐", p:40000000},{n:"انزو ⭐", p:45000000},{n:"كايسيدو ⭐", p:38000000}
+  ],
+  common: [
+    {n:"دوجلاس لويز", p:30000000},{n:"بارتي", p:25000000},{n:"جندوجان", p:20000000},{n:"كوفاسيتش", p:28000000},{n:"بيرناردو", p:35000000},
+    {n:"فابينيو", p:22000000},{n:"هندرسون CM", p:18000000},{n:"تياجو", p:15000000},{n:"جورجينيو", p:20000000},{n:"ريتشاردسون", p:32000000}
+  ]
+},
+CB: {
+  star: [
+    {n:"فان دايك ⭐", p:40000000},{n:"روبن دياز ⭐", p:38000000},{n:"ساليبا ⭐", p:35000000},{n:"روميرو ⭐", p:32000000},{n:"ميليتاو ⭐", p:36000000},
+    {n:"جفارديول CB ⭐", p:40000000},{n:"جابرييل ⭐", p:35000000},{n:"كوندي CB ⭐", p:38000000},{n:"توموري ⭐", p:30000000},{n:"كيم مين جاي ⭐", p:42000000}
+  ],
+  common: [
+    {n:"ماجواير", p:20000000},{n:"ليندلوف", p:18000000},{n:"اكانجي", p:25000000},{n:"لابورت", p:28000000},{n:"ستونز", p:30000000},
+    {n:"ووكر CB", p:22000000},{n:"شو CB", p:20000000},{n:"دالوت CB", p:16000000},{n:"جواه", p:18000000},{n:"كولويل", p:25000000}
+  ]
+},
+LB: {
+  star: [
+    {n:"الفونسو ديفيز ⭐", p:35000000},{n:"روبرتسون ⭐", p:32000000},{n:"نونو مينديز ⭐", p:30000000},{n:"ثيو هيرنانديز ⭐", p:34000000},{n:"جوارديول LB ⭐", p:38000000},
+    {n:"زينتشنكو ⭐", p:25000000},{n:"كيركيز ⭐", p:20000000},{n:"ديست LB ⭐", p:18000000},{n:"ميندي LB ⭐", p:22000000},{n:"شو LB ⭐", p:30000000}
+  ],
+  common: [
+    {n:"جوسينس", p:17000000},{n:"لوكاس دين", p:12000000},{n:"ريجيليون", p:14000000},{n:"تيرني", p:16000000},{n:"تيمبر", p:20000000},
+    {n:"كول", p:15000000},{n:"ميتشيل", p:13000000},{n:"بوتمان LB", p:18000000},{n:"انطونيو LB", p:12000000},{n:"دوهيرتي LB", p:10000000}
+  ]
+},
+RB: {
+  star: [
+    {n:"اشرف حكيمي ⭐", p:40000000},{n:"ترينت ⭐", p:38000000},{n:"ريس جيمس ⭐", p:35000000},{n:"كايل ووكر RB ⭐", p:30000000},{n:"دومفريس ⭐", p:32000000},
+    {n:"بافارد RB ⭐", p:25000000},{n:"تريبير ⭐", p:20000000},{n:"بيدرو بورو ⭐", p:18000000},{n:"وايت RB ⭐", p:22000000},{n:"دالوت RB ⭐", p:16000000}
+  ],
+  common: [
+    {n:"كونسا", p:15000000},{n:"كاش", p:12000000},{n:"مسبي", p:10000000},{n:"يورينتي RB", p:18000000},{n:"مولينا", p:20000000},
+    {n:"فريمبونج", p:25000000},{n:"هاكبو RB", p:15000000},{n:"سيميدو", p:12000000},{n:"ماتش", p:10000000},{n:"كايزر", p:8000000}
+  ]
+}
 };
 
-let currentPosIndex=0, currentPlayer, currentBid=0, highestBidder=0;
-let turn=1, m1=200000000, m2=200000000;
+let currentPosIndex=0, currentPlayer, currentBid=0, userBid=0, highestBidder=0;
+let turn=1, m1=200000, m2=200000000;
 let t1=Array(11).fill(null), t2=Array(11).fill(null);
 let isAIThinking = false;
-let aiBidCount = 0;
 
-positions.forEach((pos,i)=>{ document.getElementById('t1').innerHTML+=`<div class="slot" id="t1-${i}"><b>${pos}</b><br>-</div>`; document.getElementById('t2').innerHTML+=`<div class="slot" id="t2-${i}"><b>${pos}</b><br>-</div>`; })
-
-// دالة حفظ في الذاكرة
-function حفظ_النتيجة(اسم_اللعبة, النتيجة, الاسكور){
-    let سجل = JSON.parse(localStorage.getItem('سجل_الذاكرة')) || [];
-    let تاريخ = new Date().toLocaleString('ar-EG');
-    سجل.unshift({لعبة: اسم_اللعبة, نتيجة: النتيجة, اسكور: الاسكور, وقت: تاريخ});
-    if(سجل.length > 20) سجل.pop();
-    localStorage.setItem('سجل_الذاكرة', JSON.stringify(سجل));
-}
+positions.forEach((pos,i)=>{
+  document.getElementById('t1').innerHTML+=`<div class="player-slot pos-${pos}" id="t1-${i}"><div class="pos-name">${pos}</div><div class="player-name">-</div></div>`;
+  document.getElementById('t2').innerHTML+=`<div class="player-slot pos-${pos}" id="t2-${i}"><div class="pos-name">${pos}</div><div class="player-name">-</div></div>`;
+})
 
 function getRandomPlayer(pos){
   let key = pos.startsWith("CB")? "CB" : pos.startsWith("CM")? "CM" : pos;
-  let data = playersDB[key];
-  let allPlayers = [...data.star,...data.common];
+  let data = playersDB[key];let allPlayers = [...data.star,...data.common];
   let available = allPlayers.filter(p =>!usedPlayers.includes(p.n));
   if(available.length === 0) {usedPlayers = []; available = allPlayers;}
-  let player = available[Math.floor(Math.random()*available.length)];
-  usedPlayers.push(player.n);
-  return player;
+  let player = available[Math.floor(Math.random()*available.length)];usedPlayers.push(player.n);return player;
 }
 
 function newPlayer(){
-  isAIThinking = false; aiBidCount = 0;
-  let posName=positions[currentPosIndex];
+  isAIThinking = false;let posName=positions[currentPosIndex];
   document.getElementById('pos').innerText="المركز: " + posName;
-  currentPlayer=getRandomPlayer(posName);
-  currentBid=currentPlayer.p; highestBidder=0;
-  show();
-  if(turn==2) setTimeout(aiMove, 1000);
+  currentPlayer=getRandomPlayer(posName);currentBid=currentPlayer.p; userBid=currentBid+1000000; highestBidder=0;
+  updateBidDisplay();show();
+  if(turn==2) setTimeout(aiMove, 1200);
+}
+
+function updateBidDisplay(){
+  document.getElementById('currentBidDisplay').innerText=userBid.toLocaleString()+"$";
+}
+
+function increaseBid(){
+  let money=turn==1?m1:m2;
+  if(userBid+1000000 > money){alert("مفيش فلوس كفاية");return}
+  userBid+=1000000;updateBidDisplay();
+}
+
+function decreaseBid(){
+  if(userBid-1000000 <= currentBid){alert("اقل حاجة "+(currentBid+1000000).toLocaleString());return}
+  userBid-=1000000;updateBidDisplay();
 }
 
 function show(){
   document.getElementById('name').innerText=currentPlayer.n;
-  document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
-  document.getElementById('bidInput').value=currentBid+1000000;
-  document.getElementById('bidBtn').disabled = turn==2;
-  document.getElementById('takeBtn').disabled = turn==2;
+  document.getElementById('price').innerText="السعر الحالي: "+currentBid.toLocaleString()+"$";
+  document.getElementById('bidBtn').disabled = turn==2;document.getElementById('takeBtn').disabled = turn==2;
+  document.getElementById('plusBtn').disabled = turn==2;document.getElementById('minusBtn').disabled = turn==2;
 }
 
 function bid(){
-  let val=parseInt(document.getElementById('bidInput').value);
   let money=turn==1?m1:m2;
-  if(isNaN(val)){alert("اكتب رقم");return}
-  if(val<=currentBid){alert("لازم تعلي عن "+currentBid.toLocaleString());return}
-  if(val>money){alert("مفيش فلوس معاك "+money.toLocaleString());return}
-  currentBid=val; highestBidder=turn;
-  document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
-  turn=turn==1?2:1;
-  document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?"انت":"AI");
-  show();
-  if(turn==2) setTimeout(aiMove, 1000);
+  if(userBid<=currentBid){alert("لازم تعلي عن "+currentBid.toLocaleString());return}
+  if(userBid>money){alert("مفيش فلوس معاك "+money.toLocaleString());return}
+  currentBid=userBid; highestBidder=turn;
+  document.getElementById('price').innerText="السعر الحالي: "+currentBid.toLocaleString()+"$";
+  turn=turn==1?2:1;document.getElementById('turn').innerText="دور المزايدة: " + (turn==1?"انت":"AI");
+  userBid=currentBid+1000000;updateBidDisplay();show();
+  if(turn==2) setTimeout(aiMove, 1200);
 }
 
-function take(){
-  if(highestBidder==0){alert("لازم حد يزايد الاول");return}
-  doTake(highestBidder);
-}
+function take(){ if(highestBidder==0){alert("لازم حد يزايد الاول");return} doTake(highestBidder); }
 
 function doTake(winner){
   let loser=winner==1?2:1;
   if(winner==1){m1-=currentBid; t1[currentPosIndex]=currentPlayer;}
   else{m2-=currentBid; t2[currentPosIndex]=currentPlayer;}
   let rand=getRandomPlayer(positions[currentPosIndex]);
-  if(loser==1) t1[currentPosIndex]=rand;
-  else t2[currentPosIndex]=rand;
-  update();
-  nextPos();
+  if(loser==1) t1[currentPosIndex]=rand;else t2[currentPosIndex]=rand;update();nextPos();
 }
 
 function skip(){nextPos()}
 
-// AI: يزايد مرة واحدة بس وبعدين "خده"
-function aiMove(){
-  if(isAIThinking) return;
-  isAIThinking = true;
-  let aiMoney = m2;
-  let wantPlayer = Math.random() < 0.7;
-  if(currentPlayer.n.includes("⭐")) wantPlayer = Math.random() < 0.9;
+function aiEvaluateTeam(team){let score=0;team.forEach(p=>{ if(p){ score += p.p; if(p.n.includes("⭐")) score += 10000000; } });return score}
+function aiShouldBid(){let aiScore = aiEvaluateTeam(t2);let myScore = aiEvaluateTeam(t1);let isStar = currentPlayer.n.includes("⭐");let diff = myScore - aiScore;if(isStar && diff > 0) return true;if(m2 < currentBid) return false;if(diff > 30000000) return true;if(Math.random() < 0.6) return true;return false;}
 
+function aiMove(){
+  if(isAIThinking) return;isAIThinking = true;
   setTimeout(() => {
-    if(aiBidCount < 1 && wantPlayer && aiMoney > currentBid + 1000000){
-      let newBid = currentBid + Math.floor(Math.random()*5000000 + 1000000);
-      if(newBid > aiMoney) newBid = aiMoney;
-      currentBid = newBid; highestBidder = 2; aiBidCount++;
-      document.getElementById('price').innerText="السعر: "+currentBid.toLocaleString()+"$";
+    let shouldBid = aiShouldBid();
+    if(shouldBid && m2 > currentBid + 1000000){
+      let increase = 1000000 + Math.floor(Math.random()*3000000);
+      if(currentPlayer.n.includes("⭐")) increase += 3000000;
+      let newBid = currentBid + increase;if(newBid > m2) newBid = m2;
+      currentBid = newBid; highestBidder = 2;
+      document.getElementById('price').innerText="السعر الحالي: "+currentBid.toLocaleString()+"$";
       turn = 1; document.getElementById('turn').innerText="دور المزايدة: انت";
-      show();
+      userBid=currentBid+1000000;updateBidDisplay();show();
     } else {
       document.getElementById('turn').innerText="🤖 AI: خده!";
-      setTimeout(() => { doTake(2); }, 1000);
+      setTimeout(() => { doTake(1); }, 800);
     }
     isAIThinking = false;
-  }, 1500);
+  }, 1200);
 }
 
 function nextPos(){
   currentPosIndex++;
   if(currentPosIndex>=11){
     document.getElementById('loading').style.display = 'flex';
-    setTimeout(aiEvaluate, 3500);
-    return;
+    setTimeout(aiEvaluate, 3500);return;
   }
   document.getElementById('count').innerText=(currentPosIndex+1)+" / 11";
-  turn=1;
-  document.getElementById('turn').innerText="دور المزايدة: انت";
-  newPlayer();
+  turn=1;document.getElementById('turn').innerText="دور المزايدة: انت";newPlayer();
 }
 
-// ===== AI المحلل + الذاكرة + التذاكر =====
 function aiEvaluate(){
   let score1 = 0, score2 = 0, stars1=0, stars2=0;
   t1.forEach(p => { if(p){ score1 += p.p; if(p.n.includes("⭐")) {score1 += 10000000; stars1++;} } });
   t2.forEach(p => { if(p){ score2 += p.p; if(p.n.includes("⭐")) {score2 += 10000000; stars2++;} } });
-
-  let النتيجة; let winnerText = ""; let winnerColor = "#ffd700"; let انا_كسبت = false;
-  if(score1 > score2) {النتيجة="فوز"; winnerText = "🏆 الفائز: انت"; winnerColor="lime"; انا_كسبت = true;}
-  else if(score2 > score1) {النتيجة="خسارة"; winnerText = "🏆 الفائز: الذكاء الاصطناعي"; winnerColor="#ff4444";}
-  else {النتيجة="تعادل"; winnerText = "🤝 النتيجة: تعادل";}
-
-  // 1. احفظ في الذاكرة
-  حفظ_النتيجة("مزاد النجوم", النتيجة, `${(score1/1000000).toFixed(1)}M - ${(score2/1000000).toFixed(1)}M`);
-
+  let winnerText = ""; let winnerColor = "#ffd700";
+  if(score1 > score2) {winnerText = "🏆 الفائز: انت"; winnerColor="lime";}
+  else if(score2 > score1) {winnerText = "🏆 الفائز: الذكاء الاصطناعي"; winnerColor="#ff4444";}
+  else {winnerText = "🤝 النتيجة: تعادل";}
   document.getElementById('aiText').innerText = "اكتمل التحليل";
-  document.getElementById('aiSubText').style.display = "none";
   document.getElementById('resultBox').style.display = "block";
-  document.getElementById('resultBox').innerHTML = `
-    <div style="font-size:24px;font-weight:900;color:${winnerColor};margin-bottom:15px">${winnerText}</div>
-    <div style="display:flex;justify-content:space-between;margin:10px 0"><span>فريقك:</span><span style="color:#00aaff;font-weight:700">${(score1/1000000).toFixed(1)} مليون | ${stars1} نجوم</span></div>
-    <div style="display:flex;justify-content:space-between;margin:10px 0"><span>فريق AI:</span><span style="color:#ff4444;font-weight:700">${(score2/1000000).toFixed(1)} مليون | ${stars2} نجوم</span></div>
-    <button onclick="ارجع_الرئيسية(${انا_كسبت})" style="margin-top:20px;width:100%;background:#ffd700;color:#000">🔄 العودة للرئيسية</button>`;
+  document.getElementById('resultBox').innerHTML = `<div style="font-size:24px;font-weight:900;color:${winnerColor};margin-bottom:15px">${winnerText}</div><div style="display:flex;justify-content:space-between;margin:10px 0"><span>فريقك:</span><span style="color:#00aaff;font-weight:700">${(score1/1000000).toFixed(1)} مليون | ${stars1} نجوم</span></div><div style="display:flex;justify-content:space-between;margin:10px 0"><span>فريق AI:</span><span style="color:#ff4444;font-weight:700">${(score2/1000000).toFixed(1)} مليون | ${stars2} نجوم</span></div><button onclick="location.reload()" style="margin-top:20px;width:100%;background:#ffd700;color:#000">🔄 العب تاني</button>`;
 }
-
-function ارجع_الرئيسية(كسب){
-  // 2. زود تذكرة لو كسب
-  if(كسب){
-    let التذاكر = parseInt(localStorage.getItem("التذاكر")) || 0;
-    التذاكر = التذاكر + 1;
-    localStorage.setItem("التذاكر", التذاكر);
-  }
-  window.location.href = "home.html";
-}
-// ===== END AI =====
 
 function update(){
   document.getElementById('m1').innerText=m1.toLocaleString();
   document.getElementById('m2').innerText=m2.toLocaleString();
-  t1.forEach((p,i)=>{if(p){document.getElementById('t1-'+i).innerHTML=`<b>${positions[i]}</b><br>${p.n}`;document.getElementById('t1-'+i).classList.add('filled')}});
-  t2.forEach((p,i)=>{if(p){document.getElementById('t2-'+i).innerHTML=`<b>${positions[i]}</b><br>${p.n}`;document.getElementById('t2-'+i).classList.add('filled')}});
+  t1.forEach((p,i)=>{if(p){document.getElementById('t1-'+i).querySelector('.player-name').innerText = p.n.split(' ')[0];document.getElementById('t1-'+i).classList.add('filled')}});
+  t2.forEach((p,i)=>{if(p){document.getElementById('t2-'+i).querySelector('.player-name').innerText = p.n.split(' ')[0];document.getElementById('t2-'+i).classList.add('filled')}});
 }
+
 newPlayer();
 </script>
 </body>
